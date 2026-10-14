@@ -482,6 +482,25 @@ html.noscroll::-webkit-scrollbar{display:none}
 .fld.bad{animation:nudge .4s ease}
 @keyframes nudge{0%,100%{transform:none}25%{transform:translateX(-4px)}55%{transform:translateX(4px)}80%{transform:translateX(-2px)}}
 .saved.err{opacity:1;color:#B3261E;text-transform:none;letter-spacing:.03em;font-size:11px;line-height:12px;white-space:nowrap}
+/* ===== v25: escala tipográfica del teléfono (pocos tamaños, todos coherentes) =====
+   etiquetas en mayúsculas (Jost): 10px · líneas en inglés de las etiquetas: 9.5px · mini (días/horas, pie): 8.5px
+   texto en serif (Cormorant): español 14px · inglés cursivo 12.5px · contador y título en script aparte */
+@media (max-width:899px){
+  :root{--lab:10px;--labEn:9.5px;--mini:8.5px}
+  .below .join,.screen .formtitle,.screen .answerlbl{font-size:var(--lab);letter-spacing:.24em;opacity:.85}
+  .below .join .en,.screen .formtitle .en{font-size:var(--labEn);letter-spacing:.16em;opacity:.7}
+  .screen .units{font-size:var(--mini)}
+  #choices .btn{font-size:9.5px;letter-spacing:.1em}
+  #choices .btn .en{font-size:12.5px}
+  #rsvp .q .en{font-size:14px}
+  #rsvp .sub{font-size:14px}
+  #rsvp .sub.sub-en{font-size:12.5px}
+  #ack{font-size:14px}
+  #ack .en{font-size:12.5px}
+  .formwrap ::placeholder{font-size:14px}
+  .screen .foot .place,.screen .foot .sign .d,.screen .foot .sign .m{font-size:var(--mini)}
+}
+@media (max-width:899px) and (max-height:720px){ :root{--lab:9px;--labEn:8.5px;--mini:8px} }
 .names-img{display:block;margin:0 auto}
 .names-img img{display:block;width:min(76vw,300px);height:auto;margin:0 auto}
 .arch img{display:block;max-width:82%;max-height:88%;width:auto;height:auto}
