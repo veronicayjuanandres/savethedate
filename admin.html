@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Panel · Save the Date</title>
+<style>
+:root{--bg:#f6f3ec;--ink:#2b1214;--mut:#7d6b69;--line:#ddd5c6;--wine:#5a070c;--ok:#2f6b3a;--no:#9b2c2c;--maybe:#8a6d1a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,system-ui,sans-serif;padding:24px 16px 60px;max-width:900px;margin-inline:auto}
+h1{font-size:20px;margin:0 0 18px;font-weight:600}h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:30px 0 10px}
+.gate{max-width:320px;margin:15vh auto;text-align:center}
+.masked{-webkit-text-security:disc;text-security:disc;font-size:16px}
+input,button,textarea{font:inherit}
+input,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff}
+button{padding:10px 16px;border:0;border-radius:8px;background:var(--wine);color:#fff;cursor:pointer}
+button.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px}
+.stat b{display:block;font-size:28px;font-weight:600;line-height:1.1}.stat span{font-size:12px;color:var(--mut)}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:14px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);background:#faf7f0}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;background:#eee}
+.si{background:#e3f1e5;color:var(--ok)}.alla{background:#dcebf6;color:#1d4f7a}.no{background:#f6e0e0;color:var(--no)}.quizas{background:#f6edd0;color:var(--maybe)}
+.row{display:flex;gap:8px}.row>*{flex:1}.row button{flex:0 0 auto}
+.mut{color:var(--mut)}.small{font-size:12px}
+#links td:last-child{word-break:break-all}
+</style>
+</head>
+<body>
+<form class="gate" id="gate" autocomplete="off" onsubmit="return false">
+  <h1>Panel privado</h1>
+  <input id="key" type="text" class="masked" name="panel-clave" placeholder="Clave de administrador" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text">
+  <p><button id="go" type="submit" style="width:100%">Entrar</button></p>
+  <p class="small mut" id="err"></p>
+</form>
+
+<div id="app" hidden>
+  <h1>Save the Date · Panel</h1>
+  <div class="stats" id="stats"></div>
+
+  <h2>Invitados</h2>
+  <table><thead><tr><th>Invitado</th><th>Abrió</th><th>Sobre</th><th>Respuesta</th><th>Dejó correo</th></tr></thead><tbody id="rows"></tbody></table>
+
+  <h2>Mensajes</h2>
+  <table><thead><tr><th>Invitado</th><th>Respuesta</th><th>Mensaje</th></tr></thead><tbody id="notes"></tbody></table>
+
+  <h2>Correos para la invitación formal</h2>
+  <table><thead><tr><th>Nombre</th><th>Correo</th><th>Link de</th></tr></thead><tbody id="mails"></tbody></table>
+  <p class="small"><button class="ghost" id="copyMails" hidden>Copiar todos los correos</button></p>
+
+  <h2>Generar links únicos</h2>
+  <p class="small mut">Un nombre por línea. Cada invitado recibe su propio link y así sabes quién abrió.</p>
+  <textarea id="names" rows="5" placeholder="María López&#10;Carlos Pérez"></textarea>
+  <div class="row" style="margin-top:8px"><input id="base" placeholder="URL de tu sitio, ej. https://tusitio.com"><button id="gen">Generar</button></div>
+  <table id="links" style="margin-top:12px" hidden><thead><tr><th>Invitado</th><th>Link</th></tr></thead><tbody></tbody></table>
+  <p class="small"><button class="ghost" id="copy" hidden>Copiar todos</button></p>
+</div>
+
+<script>
+// Edita solo este archivo para personalizar el save the date.
+window.STD_CONFIG = {
+  first: "Verónica",
+  second: "Juan Andrés",
+  monogram: "V | JA",
+  // Hora de la boda en hora de Caracas (UTC-4, Venezuela no cambia de hora). Cambia solo la hora, deja el -04:00.
+  dateISO: "2027-11-12T15:00:00-04:00",
+  dateShort: "12.11.27",             // en la tarjeta (día.mes.año)
+  dateES: "12 de noviembre de 2027", // sin ambigüedad día/mes
+  dateEN: "November 12, 2027",
+  placeLabel: "Caracas",             // en el sello de la tarjeta
+  placeLong: "Caracas, Venezuela",
+  // Pega aquí la URL del Google Apps Script (ver backend/Code.gs).
+  // Vacío = modo demo: guarda en este navegador solamente.
+  apiUrl: "https://script.google.com/macros/s/AKfycby3mFPgJ2eSgNi3Yx0FNmkL2hsPM-siPNAZL745BDYx24-v_e0pxMuyNPqB99PdsiEvIA/exec",
+  photos: ["assets/2.jpg", "assets/3.jpg", "assets/1.jpg"],   // polaroids de la tarjeta
+};
+
+</script>
+<script>
+// Registro de eventos: abrir página, abrir sobre, RSVP, dirección.
+(function () {
+  const C = window.STD_CONFIG;
+  const params = new URLSearchParams(location.search);
+  const guest = (params.get("g") || "anonimo").toLowerCase();
+  const LS = "std_events_v1";
+
+  window.STD_GUEST = guest;
+
+  window.stdTrack = function (type, data) {
+    const ev = { t: new Date().toISOString(), guest, type, data: data || {}, ua: navigator.userAgent.slice(0, 120) };
+    if (!C.apiUrl) {
+      try {
+        const all = JSON.parse(localStorage.getItem(LS) || "[]");
+        all.push(ev);
+        localStorage.setItem(LS, JSON.stringify(all));
+      } catch (e) {}
+      return Promise.resolve();
+    }
+    // text/plain evita el preflight CORS con Apps Script.
+    return fetch(C.apiUrl, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(ev),
+      keepalive: true,
+    }).catch(() => {});
+  };
+
+  window.stdFetchAll = async function (key) {
+    if (!C.apiUrl) {
+      try { return JSON.parse(localStorage.getItem(LS) || "[]"); } catch (e) { return []; }
+    }
+    const r = await fetch(C.apiUrl + "?action=events&key=" + encodeURIComponent(key));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    return j.events;
+  };
+})();
+
+</script>
+<script>
+const $ = id => document.getElementById(id);
+const slug = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const lbl = {si:"Sí",alla:"Ya está en Venezuela",no:"No",quizas:"Todavía no sabe"};
+const pretty = s => s === "anonimo" ? "Sin identificar" : s.replace(/-/g," ").replace(/\b\w/g,c=>c.toUpperCase());
+let mailList = [];
+let genNames = [];
+
+async function load(key){
+  const ev = await stdFetchAll(key);
+  const g = {}, mails = [], lastMail = {};
+  ev.forEach(e=>{
+    const x = g[e.guest] ||= {guest:e.guest,name:"",views:0,open:false,rsvp:null,note:"",addr:null,last:e.t};
+    if (e.t > x.last) x.last = e.t;
+    if (e.type==="view") x.views++;
+    if (e.type==="open") x.open = true;
+    // para responder o dejar el correo hay que abrir el sobre
+    if (e.type==="rsvp"){ x.open = true; x.rsvp = e.data.answer; if (e.data.note) x.note = e.data.note; if (e.data.name) x.name = e.data.name; }
+    if (e.type==="name"){ x.open = true; x.name = e.data.name||x.name; }
+    if (e.type==="note"){ x.open = true; x.note = e.data.text||""; }          // se guarda mientras escriben: gana el último
+    if (e.type==="email"){ x.open = true; x.addr = e.data; if (e.data.name) x.name = e.data.name; lastMail[e.guest] = {guest:e.guest,t:e.t,...e.data}; }
+  });
+  mails.push(...Object.values(lastMail));
+  const list = Object.values(g).sort((a,b)=>b.last.localeCompare(a.last));
+  const n = f => list.filter(f).length;
+  $("stats").innerHTML = [
+    [list.length,"abrieron el link"],[n(x=>x.open),"abrieron el sobre"],
+    [n(x=>x.rsvp==="si"),"dicen que sí"],[n(x=>x.rsvp==="alla"),"ya están en Venezuela"],
+    [n(x=>x.rsvp==="quizas"),"quizás"],[n(x=>x.rsvp==="no"),"no pueden"],[n(x=>x.addr),"dejaron correo"],
+  ].map(([v,l])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join("");
+  $("rows").innerHTML = list.map(x=>`<tr><td>${esc(x.name||pretty(x.guest))}${x.name&&x.guest!=="anonimo"?`<div class="small mut">${esc(x.guest)}</div>`:""}</td><td>${x.views}×</td><td>${x.open?"✓":"—"}</td>
+    <td>${x.rsvp?`<span class="pill ${x.rsvp}">${lbl[x.rsvp]}</span>`:'<span class="mut">sin respuesta</span>'}</td>
+    <td>${x.addr?"✓":""}</td></tr>`).join("") || `<tr><td colspan="5" class="mut">Aún no hay actividad.</td></tr>`;
+  $("notes").innerHTML = list.filter(x=>x.note).map(x=>`<tr><td>${esc(x.name||pretty(x.guest))}</td>
+    <td><span class="pill ${x.rsvp}">${lbl[x.rsvp]||""}</span></td><td>${esc(x.note)}</td></tr>`).join("")
+    || `<tr><td colspan="3" class="mut">Nadie ha dejado mensajes todavía.</td></tr>`;
+  mails.sort((a,b)=>b.t.localeCompare(a.t)); mailList = mails;
+  $("mails").innerHTML = mails.map(m=>`<tr><td>${esc(m.name)}</td><td>${esc(m.email)}</td>
+    <td class="small mut">${esc(pretty(m.guest))}</td></tr>`).join("")
+    || `<tr><td colspan="3" class="mut">Aún no hay correos.</td></tr>`;
+  $("copyMails").hidden = !mails.length;
+}
+
+async function enter(){
+  const key = $("key").value;
+  try{
+    await load(key);
+    sessionStorage.setItem("k",key);
+    $("gate").hidden = true; $("app").hidden = false;
+    setInterval(()=>load(key).catch(()=>{}), 30000);
+  }catch(e){ $("err").textContent = "Clave incorrecta o sin conexión. (" + (e && e.message ? e.message : "error") + ")"; }
+}
+$("gate").addEventListener("submit", e => { e.preventDefault(); $("err").textContent = "Conectando…"; enter(); });
+const k0 = sessionStorage.getItem("k"); if(k0){ $("key").value = k0; enter(); }
+
+$("base").value = location.origin.startsWith("http") ? location.origin + location.pathname.replace(/admin\.html$/,"") : "";
+$("gen").onclick = () => {
+  const base = $("base").value.replace(/\/$/,"");
+  genNames = $("names").value.split("\n").map(s=>s.trim()).filter(Boolean).map(n=>[n, `${base}/?g=${slug(n)}`]);
+  $("links").hidden = false; $("copy").hidden = !genNames.length;
+  $("links").tBodies[0].innerHTML = genNames.map(([n,u])=>`<tr><td>${esc(n)}</td><td>${esc(u)}</td></tr>`).join("");
+};
+$("copyMails").onclick = () => navigator.clipboard.writeText([...new Set(mailList.map(m=>m.email))].join(", ")).then(()=>{$("copyMails").textContent="Copiado ✓"});
+$("copy").onclick = () => navigator.clipboard.writeText(genNames.map(([n,u])=>`${n}\t${u}`).join("\n")).then(()=>{$("copy").textContent="Copiado ✓"});
+</script>
+</body>
+</html>

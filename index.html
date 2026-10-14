@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Verónica & Juan Andrés · Save the Date</title>
+<meta name="theme-color" content="#4B1126">
+<meta property="og:title" content="Verónica & Juan Andrés ✉️">
+<meta property="og:description" content="Save the date · Toca el sobre para abrirlo / Tap the envelope to open.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Herr+Von+Muellerhoff&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --wine:#4B1126; --wine-d:#2C0F1F; --crimson:#6B1F3D; --seal:#6B1F3D; --orange:#C95F12; --olive:#6F6A35; --moss:#5E6E30;
+  --paper:#F4EFE6; --paper-d:#E6DFD1; --ink:#4B1126; --muted:#6F6A35;
+  --ew:min(80vw,340px); --eh:calc(var(--ew)*.68);
+  --script:'Herr Von Muellerhoff',cursive; --serif:'Cormorant Garamond',Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--wine-d);color:var(--paper);font-family:var(--serif)}
+body{min-height:100svh;overflow-x:hidden}
+.top{
+  background:radial-gradient(120% 80% at 50% 0%,#5A1831 0%,var(--wine) 55%,var(--wine-d) 100%);
+  min-height:100svh;display:flex;flex-direction:column;align-items:center;
+  padding:calc(env(safe-area-inset-top) + 9vh) 20px 56px;
+}
+.eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;opacity:.85;transition:opacity .6s}
+.names{font-family:var(--script);font-size:clamp(40px,12vw,62px);line-height:1.1;margin:6px 0 0;text-align:center;
+  transition:transform 1s cubic-bezier(.2,.7,.2,1)}
+.scene{position:relative;width:var(--ew);margin-top:7vh;padding-top:0;transition:padding-top 1.1s cubic-bezier(.2,.7,.2,1) .35s,margin-top 1s ease}
+.scene.open{padding-top:calc(var(--eh)*.92);margin-top:2vh}
+.env{position:relative;width:var(--ew);height:var(--eh);cursor:pointer;filter:drop-shadow(0 18px 24px rgba(0,0,0,.45));
+  animation:float 4s ease-in-out infinite}
+.scene.open .env{animation:none;cursor:default}
+@keyframes float{50%{transform:translateY(-4px)}}
+.env .back{position:absolute;inset:0;background:var(--paper-d);border-radius:3px}
+.cardwrap{position:absolute;inset:0;z-index:2;clip-path:inset(-300% -20% 0 -20%)}
+.card{position:absolute;left:6%;right:6%;top:8%;height:150%;background:var(--paper);border-radius:3px;
+  transition:transform 1.1s cubic-bezier(.2,.7,.2,1) .55s;color:var(--ink);overflow:hidden}
+.scene.open .card{transform:translateY(-60%)}
+.front{position:absolute;inset:0;z-index:3;background:linear-gradient(180deg,#f3efe4,var(--paper));
+  clip-path:polygon(0 0,50% 56%,100% 0,100% 100%,0 100%);border-radius:3px;pointer-events:none}
+.flap{position:absolute;left:0;right:0;top:0;height:58%;z-index:4;transform-origin:50% 0;
+  background:linear-gradient(180deg,#f6f2e8,#e9e3d3);clip-path:polygon(0 0,100% 0,50% 100%);
+  transition:transform .9s cubic-bezier(.5,0,.2,1),z-index 0s .45s}
+.scene.open .flap{transform:rotateX(180deg);z-index:1}
+.mono{position:absolute;left:50%;top:66%;transform:translate(-50%,-50%);z-index:5;font-family:var(--script);
+  font-size:clamp(26px,8vw,36px);color:#9a8c82;pointer-events:none;transition:opacity .5s;white-space:nowrap}
+.hint{margin-top:34px;font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;opacity:.8;text-align:center;transition:opacity .4s}
+.scene.open ~ .hint{opacity:0;pointer-events:none;height:0;margin:0}
+
+/* contenido de la tarjeta */
+.card .arch{position:absolute;right:5%;top:5%;width:46%;height:34%;background:#f7f4ec;border-radius:999px 999px 6px 6px;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:var(--script);font-size:clamp(20px,6vw,27px);line-height:1;color:#a89790}
+.polaroid{position:absolute;width:42%;background:#fff;padding:3% 3% 9%;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.polaroid i{display:block;aspect-ratio:1;background:#777 center/cover no-repeat}
+#ph1{background-position:6% 82%}#ph2{background-position:50% 32%}
+.p1{left:3%;top:7%;transform:rotate(-5deg)}
+.p2{left:5%;top:36%;transform:rotate(4deg)}
+.seal{position:absolute;right:6%;top:36%;width:44%;aspect-ratio:1;display:grid;place-items:center;text-align:center;color:#f2e4e0;
+  font-size:clamp(8px,2.6vw,11px);letter-spacing:.14em;line-height:1.5;font-weight:500;text-transform:uppercase}
+.seal svg{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 3px 5px rgba(0,0,0,.35))}
+.seal span{position:relative}
+
+/* texto bajo el sobre */
+.after-env{max-width:340px;text-align:center;opacity:0;transform:translateY(12px);height:0;overflow:hidden;
+  transition:opacity .8s ease 1.9s,transform .8s ease 1.9s}
+.scene.open ~ .after-env{opacity:1;transform:none;height:auto;margin-top:26px}
+.after-env .loc{font-size:12px;letter-spacing:.24em;text-transform:uppercase;line-height:1.7}
+.after-env .follow{font-family:var(--script);font-size:30px;margin-top:10px;color:#f1e3df}
+
+/* sección crema */
+.below{display:none;background:var(--paper);color:var(--ink);padding:56px 24px 72px;text-align:center}
+.below.show{display:block;animation:fade 1s ease both}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.below h3{font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:500;opacity:.85}
+.count{display:flex;justify-content:center;gap:6px;margin:22px 0 4px;font-size:clamp(30px,9vw,40px);letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.count div{min-width:2ch}.count em{font-style:normal;opacity:.5}
+.units{display:flex;justify-content:center;gap:34px;font-size:8.5px;letter-spacing:.26em;text-transform:uppercase;opacity:.6;margin-bottom:40px}
+.rule{width:44px;height:1px;background:var(--ink);opacity:.25;margin:0 auto 34px}
+.q{font-family:var(--script);font-size:clamp(34px,10vw,44px);line-height:1.15;margin-bottom:6px}
+.sub{font-size:15px;color:var(--muted);margin-bottom:22px;font-style:italic}
+.choices{display:grid;gap:10px;max-width:320px;margin:0 auto}
+.btn{appearance:none;border:1px solid var(--ink);background:transparent;color:var(--ink);font:500 11px var(--serif);letter-spacing:.26em;
+  text-transform:uppercase;padding:15px 14px;cursor:pointer;transition:background .2s,color .2s}
+.btn:hover,.btn.sel{background:var(--ink);color:var(--paper)}
+.btn.solid{background:var(--ink);color:var(--paper)}
+.btn.solid:hover{background:var(--wine-d)}
+.btn[disabled]{opacity:.5;cursor:default}
+.extra{max-width:320px;margin:18px auto 0;display:none;text-align:left}
+.extra.show{display:block}
+label{display:block;font-size:10px;letter-spacing:.22em;text-transform:uppercase;margin:14px 0 6px;opacity:.75}
+input,select,textarea{width:100%;background:transparent;border:0;border-bottom:1px solid rgba(75,17,38,.35);color:var(--ink);
+  font:400 17px var(--serif);padding:8px 2px;border-radius:0;outline:0}
+input:focus,select:focus,textarea:focus{border-bottom-color:var(--ink)}
+textarea{resize:none;height:60px}
+.thanks{display:none;font-style:italic;font-size:19px;line-height:1.4;max-width:300px;margin:0 auto}
+.thanks.show{display:block}
+.addr{margin-top:46px}
+.addr p{font-size:15px;color:var(--muted);font-style:italic;margin-bottom:16px;max-width:300px;margin-inline:auto}
+.en{display:block;font-style:italic;text-transform:none;letter-spacing:.02em;font-size:.86em;opacity:.7;margin-top:3px;font-weight:400}
+.btn .en{font-size:13px;letter-spacing:.04em;opacity:.8;margin-top:4px}
+h3 .en,.eyebrow .en,.hint .en,.loc .en,label .en{letter-spacing:.14em;text-transform:uppercase;font-style:normal;font-size:.9em}
+.q .en{font-family:var(--serif);font-size:18px;margin-top:2px}
+.hero{max-width:320px;margin:0 auto 42px;background:#fff;padding:9px 9px 9px;box-shadow:0 8px 22px rgba(60,20,20,.18);transform:rotate(-1.2deg)}
+.hero img{display:block;width:100%;height:auto;filter:grayscale(1)}
+.sign{font-family:var(--script);font-size:46px;line-height:1.05;margin-top:50px;opacity:.9}
+
+/* ===== v2: paleta de la boda, tipografía, silueta, sello ===== */
+body{--f-caps:'Bodoni Moda',serif;--f-script:'Herr Von Muellerhoff',cursive;--f-label:'Jost',sans-serif;--f-hand:'Cormorant Garamond',serif;--script:var(--f-script)}
+.top{position:relative;overflow:hidden;padding-bottom:150px;padding-top:calc(env(safe-area-inset-top) + 7vh)}
+.sky-top{position:absolute;left:50%;bottom:0;width:max(100%,520px);transform:translateX(-50%);opacity:.2;pointer-events:none;z-index:0}
+.top>*:not(.sky-top){position:relative;z-index:1}
+.eyebrow,.hint,.loc,.below h3,.units,label,.btn{font-family:var(--f-label)}
+.hint{font-size:10px;letter-spacing:.3em}
+.hint::before{content:"";display:block;width:5px;height:5px;border-radius:50%;background:var(--orange);margin:0 auto 14px;animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.7);opacity:.55}}
+.scene.open ~ .hint::before{display:none}
+.names{display:flex;flex-direction:column;align-items:center;text-align:center;font-family:var(--f-script);font-weight:400;
+  font-size:clamp(62px,18.5vw,82px);line-height:.86;margin:0}
+.names .amp{font-size:.5em;line-height:.9;margin:.04em 0 .02em;opacity:.9}
+.scene{margin-top:4vh}
+
+/* sello de cera burgundy sobre el sobre crema */
+.flap{transition:transform .9s cubic-bezier(.5,0,.2,1),z-index 0s .45s,background .5s .2s}
+.scene.open .flap{background:linear-gradient(180deg,var(--crimson),var(--wine))}
+.sealwrap{position:absolute;left:0;right:0;top:0;height:58%;z-index:6;transform-origin:50% 0;pointer-events:none;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:transform .9s cubic-bezier(.5,0,.2,1)}
+.scene.open .sealwrap{transform:rotateX(180deg)}
+.wax{position:absolute;left:50%;top:100%;width:calc(var(--ew)*.31);height:auto;transform:translate(-50%,-53%);pointer-events:none}
+
+/* tarjeta */
+.arch{font-size:clamp(27px,8.4vw,36px)!important;line-height:.82!important;color:#8c6f78!important;font-family:var(--f-script)}
+.seal{font-family:var(--f-label);font-size:clamp(9px,2.9vw,12px);letter-spacing:.22em;font-weight:500}
+
+/* bajo el sobre */
+.after-env .loc{font-size:11px;letter-spacing:.28em;line-height:1.8}
+.after-env .loc .en{font-size:.92em;opacity:.65;margin-top:0;letter-spacing:.22em}
+.loc::after{content:"";display:block;width:5px;height:5px;background:var(--orange);transform:rotate(45deg);margin:16px auto 0}
+.after-env .follow{font-family:var(--f-script);font-size:clamp(34px,10vw,42px);line-height:.9;margin-top:8px}
+.after-env .follow .en{font-family:var(--f-label);letter-spacing:.2em;text-transform:uppercase;font-size:9px!important;margin-top:10px;font-style:normal}
+
+/* sección crema */
+.below h3{font-size:10.5px;letter-spacing:.32em}
+.count{font-family:var(--f-caps);font-size:clamp(28px,8.4vw,38px)}
+.count em{color:var(--orange);opacity:1;font-size:.7em;align-self:center}
+.units{font-size:8px;gap:30px}
+.rule{height:1px;background:linear-gradient(90deg,transparent,var(--ink) 45%,transparent);opacity:.3;width:120px;position:relative;overflow:visible}
+.rule::after{content:"";position:absolute;left:50%;top:50%;width:5px;height:5px;background:var(--orange);transform:translate(-50%,-50%) rotate(45deg);opacity:1}
+.q{font-family:var(--f-script);font-size:clamp(42px,12.5vw,54px);line-height:.95;margin-bottom:10px}
+.q .en{font-family:var(--f-hand);font-size:19px;letter-spacing:0;text-transform:none;margin-top:6px;line-height:1.1}
+.sub{font-family:var(--f-hand);font-size:16px;color:var(--olive)}
+.btn{font-size:10.5px;letter-spacing:.24em}
+.btn .en{font-family:var(--f-hand);letter-spacing:0;font-size:15px}
+.thanks{font-family:var(--f-hand)}
+.hero img{filter:grayscale(1) contrast(1.03)}
+.addr p.mail{white-space:nowrap;font-size:min(15.5px,3.9vw);max-width:none;margin-bottom:18px}
+.addr p.mail span{opacity:.85}
+.skyline{display:block;width:min(100%,380px);margin:56px auto 0;height:auto}
+.place{font-family:var(--f-label);font-size:10px;letter-spacing:.3em;text-transform:uppercase;margin-top:14px;color:var(--ink)}
+.place i{display:inline-block;width:4px;height:4px;background:var(--orange);transform:rotate(45deg);margin:0 10px 2px}
+.sign{margin-top:38px;opacity:1;font-family:var(--f-label);font-size:inherit;line-height:1}
+.sign .d{font-size:11px;letter-spacing:.36em;padding-left:.36em;opacity:.8}
+.sign .m{font-size:17px;font-weight:500;letter-spacing:.42em;padding-left:.42em;margin-top:12px}
+.ack{font-family:var(--f-hand);font-size:19px;line-height:1.35;text-align:center;margin:26px auto 0;max-width:310px;color:var(--ink);display:none}
+.ack.show{display:block;animation:fade .6s ease both}
+.ack .en{display:block;font-size:16px;opacity:.75;margin-top:6px}
+.choices.answered .btn:not(.sel){opacity:.5}
+.formwrap{max-width:320px;margin:18px auto 34px;text-align:left}
+.formtitle{margin-top:40px}
+.formwrap textarea{height:64px}
+.saved{font:400 10px var(--f-label);letter-spacing:.22em;text-transform:uppercase;text-align:center;margin-top:16px;opacity:0;transition:opacity .4s;color:var(--olive)}
+.saved.on{opacity:.9}
+/* ===== v3: más compacto en móvil + descripción en dos bloques ===== */
+.below{padding:40px 22px 52px}
+.hero{margin-bottom:28px}
+.count{margin:16px 0 2px}
+.units{margin-bottom:26px}
+.rule{margin-bottom:24px}
+.q{margin-bottom:8px}
+.sub{font-family:var(--f-hand);font-style:normal;font-size:17px;line-height:1.3;color:var(--ink);margin:0 auto;max-width:330px}
+.sub.sub-en{font-style:italic;font-size:15px;color:var(--olive);margin-top:10px;opacity:.95}
+.formtitle{margin-top:26px}
+.formwrap{margin:10px auto 20px}
+label{margin:10px 0 3px}
+input,textarea{padding:6px 2px;font-size:17px}
+.formwrap textarea{height:46px}
+.saved{margin-top:8px;height:12px;font-size:9px}
+.answerlbl{font:500 9.5px var(--f-label);letter-spacing:.28em;text-transform:uppercase;text-align:center;margin:0 0 10px;color:var(--ink);opacity:.75}
+.choices{gap:8px}
+.btn{padding:11px 12px}
+.btn .en{margin-top:2px;font-size:14px}
+.ack{margin-top:18px}
+/* ===== v5: una pantalla + pie de página como antes ===== */
+.below{display:none;padding:0;text-align:center;overflow:hidden}
+.below.show{display:block;animation:fade 1s ease both}
+.screen{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.screen .wrap{position:relative;z-index:1;width:100%;max-width:410px;margin:0 auto;padding:clamp(16px,3vh,30px) 20px clamp(10px,2vh,22px)}
+/* rombo naranja como separador */
+.dmd{width:5px;height:5px;background:var(--orange);transform:rotate(45deg);margin:clamp(9px,1.7vh,15px) auto}
+.join{font-size:9.5px;letter-spacing:.3em;line-height:1.5;padding:0 14px}
+.join .en{font-size:.95em;letter-spacing:.2em}
+.count{margin:clamp(6px,1.3vh,12px) 0 0;font-size:clamp(26px,7.6vw,34px)}
+.units{margin:2px 0 0;font-size:7.5px;gap:26px}
+.q{margin:0;font-size:clamp(34px,10vw,44px);line-height:1}
+.q img{width:min(62vw,236px);margin:0 auto}
+.q .en{font-size:15px;margin-top:0;line-height:1.1}
+.sub{font-size:14.5px;line-height:1.25;max-width:340px;margin:0 auto}
+.sub.sub-en{font-size:13px;margin-top:5px}
+.formtitle{font:500 9px var(--f-label);letter-spacing:.24em;text-transform:uppercase;margin:0 0 2px;opacity:.85}
+.formtitle .en{letter-spacing:.14em;opacity:.7}
+.formwrap{max-width:none;margin:4px auto 8px;text-align:left}
+.formrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.formwrap input,.formwrap textarea{padding:7px 2px;font-size:16px}
+.formwrap textarea{height:36px;margin-top:6px;resize:none}
+.formwrap ::placeholder{color:rgba(75,17,38,.5);font-size:13px}
+.saved{margin-top:2px;height:10px}
+.answerlbl{margin:4px 0 6px;font-size:8.5px}
+.choices{grid-template-columns:1fr 1fr;gap:8px;max-width:none}
+.btn{padding:8px 4px;font-size:8.8px;letter-spacing:.13em;line-height:1.35;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.btn .en{font-size:12.5px;line-height:1.15;margin-top:2px}
+.ack{display:block;visibility:hidden;min-height:56px;margin-top:8px;font-size:15.5px;line-height:1.22;animation:none}
+.ack.show{visibility:visible;animation:fade .6s ease both}
+.ack .en{font-size:13px;margin-top:3px}
+/* pie de página: como estaba antes */
+.foot{padding:6px 24px 56px;text-align:center}
+.foot .skyline{display:block;width:min(100%,380px);margin:14px auto 0;height:auto}
+@media (max-height:720px){
+  .screen .wrap{padding-top:14px;padding-bottom:8px}
+  .join{font-size:8.5px;letter-spacing:.26em}
+  .count{font-size:26px;margin-top:4px}
+  .dmd{margin:7px auto}
+  .q img{width:min(52vw,196px)}
+  .q .en{font-size:13.5px}
+  .sub{font-size:13px;line-height:1.2}
+  .sub.sub-en{font-size:11.5px;margin-top:2px}
+  .formwrap input,.formwrap textarea{padding:5px 2px}
+  .formwrap textarea{height:30px;margin-top:4px}
+  .answerlbl{display:none}
+  .btn{min-height:46px;padding:5px 3px}
+  .ack{min-height:40px;font-size:13.5px;margin-top:6px}
+  .ack .en{font-size:11.5px}
+}
+/* ===== v6: todo en una pantalla (pie incluido), 3 polaroids en la tarjeta ===== */
+.screen{justify-content:space-between}
+.screen .wrap{flex:1;display:flex;flex-direction:column;justify-content:center;padding:clamp(12px,2.4vh,26px) 20px 0}
+.units{margin:2px 0 clamp(8px,1.5vh,14px)}
+.dmd{margin:clamp(6px,1.1vh,10px) auto}
+.ack{min-height:68px;margin-top:6px;font-size:14.5px;line-height:1.2}
+.ack .en{font-size:12px;margin-top:2px}
+.formtitle{margin-top:clamp(10px,1.7vh,15px)}
+.foot{padding:clamp(4px,1vh,10px) 24px clamp(8px,1.8vh,18px);text-align:center;flex:none}
+.foot .skyline{width:min(46%,170px);margin:0 auto}
+.foot .place{margin-top:clamp(4px,.9vh,8px);font-size:8.5px;letter-spacing:.28em}
+.foot .sign{margin-top:clamp(5px,1vh,9px)}
+.foot .sign .d{font-size:9.5px}
+.foot .sign .m{font-size:14px;margin-top:5px}
+/* tarjeta con 3 polaroids */
+.card .polaroid{width:36%}
+.card .p1{left:2%;top:5%;transform:rotate(-6deg)}
+.card .p3{left:21%;top:22%;transform:rotate(5deg);z-index:1}
+.card .p2{left:3%;top:39%;transform:rotate(-3deg);z-index:2}
+.card .arch{right:3%!important;width:40%!important}
+.card .seal{right:4%!important;width:38%!important}
+#ph3{background-position:50% 18%}
+@media (max-height:720px){
+  .foot .skyline{display:none}
+  .units{margin-bottom:6px}
+  .ack{min-height:52px;font-size:13px;margin-top:4px}
+  .ack .en{font-size:11px}
+  .btn{min-height:42px;padding:4px 3px}
+  .formwrap textarea{height:28px}
+  .formtitle{margin-top:8px}
+  .sub.sub-en{font-size:11px}
+}
+/* ===== v7: más aire en la pantalla de preguntas + escritorio ===== */
+.screen{justify-content:center}
+.screen .wrap{flex:none;padding:clamp(12px,2.2vh,28px) 20px 0}
+.units{margin:2px 0 clamp(8px,2vh,22px)}
+.dmd{margin:clamp(6px,1.4vh,15px) auto}
+.formtitle{margin-top:clamp(10px,2.4vh,28px)}
+.formwrap{margin:4px auto clamp(8px,1.8vh,20px)}
+.answerlbl{display:block;margin:0 0 6px;font-size:8.5px}
+.foot{margin-top:clamp(10px,3vh,40px);padding:0 24px clamp(8px,1.6vh,18px)}
+.foot .place{margin-top:clamp(7px,1.2vh,14px)}
+.foot .sign{margin-top:clamp(7px,1.3vh,15px)}
+@media (max-height:720px){ .answerlbl{display:none} }
+
+/* ===== v8: ajuste fino para teléfonos ===== */
+.join{font-size:9px;letter-spacing:.2em;padding:0 8px}
+.join .en{letter-spacing:.16em}
+.units{margin-bottom:clamp(6px,1.5vh,20px)}
+.formtitle{margin-top:clamp(8px,1.8vh,26px)}
+.formwrap textarea{height:32px;overflow:hidden}
+.ack{min-height:70px;font-size:14px;line-height:1.2;margin-top:4px}
+.ack .en{font-size:11.5px}
+.foot{margin-top:clamp(8px,1.8vh,38px)}
+.foot .skyline{width:min(40%,150px)}
+.btn{min-height:48px}
+.sub{line-height:1.2}
+.dmd{margin:clamp(5px,1.1vh,14px) auto}
+/* ===== v9: nombres más chicos, polaroids menos encimadas, espacio repartido ===== */
+html.noscroll{scrollbar-width:none}
+html.noscroll::-webkit-scrollbar{display:none}
+.names{font-size:clamp(50px,15vw,66px)}
+.card{overflow:visible}
+.card .polaroid{width:33%}
+.card .p1{left:1%;top:-2%;transform:rotate(-6deg);z-index:1}
+.card .p3{left:27%;top:19%;transform:rotate(5deg);z-index:2}
+.card .p2{left:3%;top:40%;transform:rotate(-3deg);z-index:3}
+#ph1{background-position:50% 32%}
+#ph2{background-position:6% 82%}
+#ph3{background-position:50% 18%}
+/* el espacio que sobra en pantallas altas se reparte entre los bloques (hasta 80px) */
+:root{--slack:min(120px,max(0px,calc(100svh - 760px)))}
+.units{margin-bottom:calc(6px + var(--slack)*.12)}
+.dmd{margin:calc(5px + var(--slack)*.10) auto}
+.formtitle{margin-top:calc(8px + var(--slack)*.14)}
+.formwrap{margin-bottom:calc(6px + var(--slack)*.10)}
+.ack{margin-top:calc(4px + var(--slack)*.08)}
+.foot{margin-top:calc(8px + var(--slack)*.14)}
+.foot .place{margin-top:calc(6px + var(--slack)*.08)}
+.foot .sign{margin-top:calc(6px + var(--slack)*.08)}
+@media (max-width:899px){
+  .screen .wrap{padding-left:30px;padding-right:30px}
+  .below .join{font-size:8.4px;letter-spacing:.17em;padding:0;line-height:1.5}
+  .below .join .en{letter-spacing:.14em}
+  .count{font-size:clamp(26px,7.2vw,31px)}
+  .sub{font-size:14px}
+  .sub.sub-en{font-size:12.5px}
+  .btn{min-height:46px}
+  .formwrap input,.formwrap textarea{padding:6px 2px}
+  .formwrap textarea{height:30px}
+  .ack{min-height:62px;font-size:13.5px}
+  .ack .en{font-size:11px}
+  .foot .skyline{width:min(36%,132px)}
+}
+/* el inglés de los mensajes de respuesta va en verde oliva, igual que la descripción */
+.ack .en{color:var(--olive);opacity:1}
+/* altura dinámica: la pantalla ocupa justo lo visible aunque la barra del navegador se esconda */
+.top{min-height:100svh;min-height:100dvh}
+@media (max-width:899px){ .top{padding-top:calc(env(safe-area-inset-top) + 2.5vh)} }
+.screen{min-height:100svh;min-height:100dvh}
+/* franja reservada abajo en teléfonos: ahí Netlify (plan gratis) muestra su distintivo flotante "Powered by Netlify".
+   Si algún día se publica en otro sitio sin distintivo, pon --badge:0px */
+:root{--badge:0px}
+@media (max-width:899px){
+  :root{--badge:14px}
+  .top{padding-bottom:var(--badge)!important}
+  .screen{padding-bottom:var(--badge)}
+}
+/* teléfonos con poca altura visible (Safari en iPhone 14 y similares): textos de debajo del sobre más compactos */
+@media (max-width:899px) and (max-height:720px){
+  .top .names{margin-bottom:8px}
+  .scene.open ~ .after-env{margin-top:12px}
+  .after-env .loc{line-height:1.5}
+  .after-env .loc::after{margin-top:8px}
+  .after-env .follow{font-size:28px;margin-top:4px}
+  .after-env .follow .en{margin-top:6px}
+}
+/* sobre cerrado centrado verticalmente; al abrir, el conjunto se reacomoda solo */
+/* el espacio libre se reparte 1:1:2 (arriba de los nombres, entre nombres y sobre, y abajo): nombres a medio camino y sobre centrado */
+.top .sp{flex:1 1 0;min-height:0;width:100%}
+.top .sp3{flex-grow:2}
+.top .names{margin:0 0 max(2.4vh,10px)}
+.top .scene{margin-top:0}
+/* teléfonos bajos (iPhone SE): el sobre abierto con sus textos también cabe en una pantalla */
+@media (max-height:720px) and (max-width:899px){
+  :root{--ew:min(72vw,268px)}
+  .top{padding-bottom:8px}
+  .top{padding-top:calc(env(safe-area-inset-top) + 4vh)}
+  .scene{margin-top:2.4vh}
+  .hint{margin-top:26px}
+  .after-env .loc{font-size:10.5px}
+  .after-env .follow{font-size:30px}
+}
+.top{padding-bottom:36px}
+@media (max-height:720px){ .top{padding-bottom:8px} }
+/* escritorio: mismo orden de siempre (nombres arriba, textos abajo); sobre más grande y centrado */
+@media (min-width:900px){
+  .screen::before,.screen::after{content:"";flex:.5 1 0;min-height:0}
+  .screen::after{flex-grow:.3}
+  .sp-mid{flex:2 1 0;min-height:0;max-height:84px}
+}
+@media (min-width:900px){
+  :root{--ew:min(60vw,clamp(340px,44vh,500px))}
+  .scene{margin-top:2.5vh}
+  :root{--slack:min(64px,max(0px,calc(100svh - 780px)))}
+  .top{padding-top:calc(env(safe-area-inset-top) + 2vh);padding-bottom:0}
+  .names{font-size:clamp(84px,11vh,132px)}
+  .top .names{margin-bottom:max(1.5vh,8px)}
+  .after-env{max-width:480px}
+  .after-env .loc{font-size:12px}
+}
+@media (min-width:900px) and (max-height:760px){ :root{--ew:min(60vw,292px)} }
+@media (min-width:900px) and (min-height:820px) and (max-height:999px){
+  .screen .wrap{max-width:500px}
+  .count{font-size:44px}
+  .sub{font-size:16px;max-width:460px}
+  .sub.sub-en{font-size:14px}
+  .btn{min-height:56px;font-size:9.5px}
+  .btn .en{font-size:13.5px}
+  .formwrap input,.formwrap textarea{font-size:17px}
+  .foot .skyline{width:min(26%,140px)}
+}
+@media (min-width:900px) and (min-height:1000px){
+  .screen .wrap{max-width:600px}
+  .join{font-size:11.5px}
+  .count{font-size:clamp(40px,3.4vw,56px)}
+  .units{font-size:9px;gap:36px}
+  .q .en{font-size:19px}
+  .sub{font-size:18px;max-width:520px}
+  .sub.sub-en{font-size:15.5px}
+  .formtitle{font-size:10.5px}
+  .formwrap input,.formwrap textarea{font-size:18px}
+  .formwrap ::placeholder{font-size:15px}
+  .answerlbl{font-size:10px}
+  .btn{font-size:10.5px;min-height:66px}
+  .btn .en{font-size:15px}
+  .ack{font-size:18px;min-height:80px}
+  .ack .en{font-size:14px}
+  .foot .skyline{width:min(22%,170px)}
+  .foot .place{font-size:10px}
+  .foot .sign .d{font-size:11px}
+  .foot .sign .m{font-size:17px}
+}
+/* escritorio: mensajes de respuesta un poco más grandes y con más aire sobre ellos */
+@media (min-width:900px) and (min-height:760px){
+  .ack{font-size:16px;min-height:74px;margin-top:calc(14px + var(--slack)*.1)}
+  .ack .en{font-size:13.5px;margin-top:3px}
+}
+@media (min-width:900px) and (min-height:1000px){
+  .ack{font-size:19.5px;min-height:92px;margin-top:26px}
+  .ack .en{font-size:15.5px}
+}
+/* ===== v21 ===== */
+/* sin parpadeo: el fade de la sección inferior ocurre una sola vez (antes se reiniciaba al recalcular el tamaño) */
+.below.shown{animation:none!important;opacity:1}
+/* pie más discreto y pegado al borde inferior */
+.screen .foot{margin-top:auto}
+.foot .place{font-size:7.5px;letter-spacing:.3em;margin-top:6px}
+.foot .sign{margin-top:6px}
+.foot .sign .d{font-size:8.5px;letter-spacing:.3em;padding-left:.3em}
+.foot .sign .m{font-size:8.5px;letter-spacing:.34em;padding-left:.34em;margin-top:4px;font-weight:400;opacity:.8}
+.foot{padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+/* escritorio: "Esperamos que puedas acompañarnos" más grande y más aire alrededor de la pregunta */
+@media (min-width:900px){
+  .below .join{font-size:14.5px;letter-spacing:.3em}
+  .below .join .en{font-size:.92em}
+  .q{margin-top:clamp(8px,2vh,24px)}
+  .dmd{margin:clamp(12px,2.4vh,26px) auto}
+  .sub.sub-en{margin-bottom:clamp(4px,1.4vh,16px)}
+  .formtitle{margin-top:clamp(14px,2.8vh,32px)}
+  .foot .place{font-size:9px;margin-top:8px}
+  .foot .sign .d,.foot .sign .m{font-size:9.5px}
+}
+.names-img{display:block;margin:0 auto}
+.names-img img{display:block;width:min(76vw,300px);height:auto;margin:0 auto}
+.arch img{display:block;max-width:82%;max-height:88%;width:auto;height:auto}
+.after-env .follow img{display:block;width:min(74vw,290px);height:auto;margin:0 auto}
+.after-env .follow{line-height:1}
+.q img{display:block;width:min(60vw,226px);height:auto;margin:0 auto 4px}
+@media (min-width:900px){
+  .names-img img{width:clamp(410px,50vh,640px)}
+  .after-env .follow img{width:clamp(300px,28vh,360px)}
+}
+@media (min-width:900px) and (max-height:760px){ .names-img img{width:360px} }
+@media (max-width:899px) and (max-height:720px){ .after-env .follow img{width:min(60vw,236px)} }
+@media (min-width:900px) and (min-height:1000px){ .q img{width:min(24vw,360px)} }
+@media (min-width:900px) and (min-height:820px) and (max-height:999px){ .q img{width:min(22vw,300px)} }
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01s!important;transition-delay:0s!important}}
+</style>
+</head>
+<body>
+<main>
+  <section class="top">
+    <div class="sp sp1"></div>
+    <h1 class="names names-img" id="names"><img src="assets/names-cream.svg" alt="Verónica &amp; Juan Andrés"></h1>
+    <div class="sp sp2"></div>
+
+    <div class="scene" id="scene">
+      <div class="env" id="env" role="button" tabindex="0" aria-label="Abrir sobre">
+        <div class="back"></div>
+        <div class="cardwrap"><div class="card">
+          <div class="polaroid p1"><i id="ph1"></i></div>
+          <div class="polaroid p3"><i id="ph3"></i></div>
+          <div class="polaroid p2"><i id="ph2"></i></div>
+          <div class="arch"><img src="assets/save-our-date.svg" alt="Save our Date"></div>
+          <div class="seal">
+            <svg viewBox="0 0 100 100" aria-hidden="true"><g fill="#6B1F3D"><circle cx="30" cy="30" r="24"/><circle cx="70" cy="30" r="24"/><circle cx="30" cy="70" r="24"/><circle cx="70" cy="70" r="24"/><circle cx="50" cy="50" r="30"/></g></svg>
+            <span id="sealTxt"></span>
+          </div>
+        </div></div>
+        <div class="front"></div>
+        <div class="flap"></div>
+        <div class="sealwrap">
+          <img class="wax" src="assets/seal.png" alt="" aria-hidden="true">
+        </div>
+      </div>
+    </div>
+    <div class="hint" id="hint">Toca el sobre para abrirlo<span class="en">Tap the envelope to open</span></div>
+
+    <img class="sky-top" src="assets/caracas-cream.png" alt="" aria-hidden="true">
+    <div class="after-env">
+      <div class="loc" id="loc"></div>
+      <div class="follow"><img src="assets/invitacion-formal.svg" alt="Invitación formal a seguir"><span class="en">Formal invitation to follow</span></div>
+    </div>
+    <div class="sp sp3"></div>
+  </section>
+
+  <section class="below" id="below">
+    <div class="screen">
+      <div class="wrap">
+        <h3 class="join">Esperamos que puedas acompañarnos<span class="en">We hope you can join us</span></h3>
+        <div class="count" id="count"></div>
+        <div class="units"><span>días<br>days</span><span>horas<br>hours</span><span>min<br>min</span><span>seg<br>sec</span></div>
+
+        <div id="rsvp">
+          <div class="q"><img src="assets/irias-venezuela.svg" alt="¿Irías a Venezuela?"><span class="en">Would you go to Venezuela?</span></div>
+          <div class="dmd"></div>
+          <p class="sub">Solo nos gustaría saber si estarías dispuesto/a a ir. Los detalles van en la invitación formal.</p>
+          <p class="sub sub-en">We would just like to know if you’d be open to coming. The details will come with the formal invitation.</p>
+
+          <div class="formtitle">Déjanos tu info actualizada<span class="en"> · Leave us your updated info</span></div>
+          <div class="formwrap">
+            <div class="formrow">
+              <input id="aname" aria-label="Nombre · Name" placeholder="Nombre · Name" autocomplete="name" enterkeyhint="next">
+              <input id="aemail" type="email" aria-label="Correo · Email" placeholder="Correo · Email" autocomplete="email" inputmode="email" autocapitalize="off" enterkeyhint="go">
+            </div>
+            <textarea id="note" rows="1" aria-label="Un mensajito (opcional)" placeholder="Un mensajito (opcional) · A little note"></textarea>
+            <div class="saved" id="saved">Guardado · Saved ✓</div>
+          </div>
+
+          <div class="answerlbl">Tu respuesta · Your answer ↓</div>
+          <div class="choices" id="choices">
+            <button class="btn" data-a="si">Sí, me encantaría ir<span class="en">Yes, I’d love to</span></button>
+            <button class="btn" data-a="alla">Ya estoy en Venezuela</button>
+            <button class="btn" data-a="quizas">Todavía no sé<span class="en">I’m not sure yet</span></button>
+            <button class="btn" data-a="no">No creo poder ir<span class="en">I don’t think I can</span></button>
+          </div>
+          <div class="ack" id="ack" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div class="sp-mid"></div>
+      <div class="foot">
+        <img class="skyline" src="assets/caracas-wine.png" alt="Silueta de Caracas con el Ávila">
+        <div class="place">Caracas<i></i>Venezuela</div>
+        <div class="sign"><div class="d" id="signDate"></div><div class="m" id="signMono"></div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+// Edita solo este archivo para personalizar el save the date.
+window.STD_CONFIG = {
+  first: "Verónica",
+  second: "Juan Andrés",
+  monogram: "V | JA",
+  // Hora de la boda en hora de Caracas (UTC-4, Venezuela no cambia de hora). Cambia solo la hora, deja el -04:00.
+  dateISO: "2027-11-12T15:00:00-04:00",
+  dateShort: "12.11.27",             // en la tarjeta (día.mes.año)
+  dateES: "12 de noviembre de 2027", // sin ambigüedad día/mes
+  dateEN: "November 12, 2027",
+  placeLabel: "Caracas",             // en el sello de la tarjeta
+  placeLong: "Caracas, Venezuela",
+  // Pega aquí la URL del Google Apps Script (ver backend/Code.gs).
+  // Vacío = modo demo: guarda en este navegador solamente.
+  apiUrl: "https://script.google.com/macros/s/AKfycby3mFPgJ2eSgNi3Yx0FNmkL2hsPM-siPNAZL745BDYx24-v_e0pxMuyNPqB99PdsiEvIA/exec",
+  photos: ["assets/2.jpg", "assets/3.jpg", "assets/1.jpg"],   // polaroids de la tarjeta
+};
+
+</script>
+<script>
+// Registro de eventos: abrir página, abrir sobre, RSVP, dirección.
+(function () {
+  const C = window.STD_CONFIG;
+  const params = new URLSearchParams(location.search);
+  const guest = (params.get("g") || "anonimo").toLowerCase();
+  const LS = "std_events_v1";
+
+  window.STD_GUEST = guest;
+
+  window.stdTrack = function (type, data) {
+    const ev = { t: new Date().toISOString(), guest, type, data: data || {}, ua: navigator.userAgent.slice(0, 120) };
+    if (!C.apiUrl) {
+      try {
+        const all = JSON.parse(localStorage.getItem(LS) || "[]");
+        all.push(ev);
+        localStorage.setItem(LS, JSON.stringify(all));
+      } catch (e) {}
+      return Promise.resolve();
+    }
+    // text/plain evita el preflight CORS con Apps Script.
+    return fetch(C.apiUrl, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(ev),
+      keepalive: true,
+    }).catch(() => {});
+  };
+
+  window.stdFetchAll = async function (key) {
+    if (!C.apiUrl) {
+      try { return JSON.parse(localStorage.getItem(LS) || "[]"); } catch (e) { return []; }
+    }
+    const r = await fetch(C.apiUrl + "?action=events&key=" + encodeURIComponent(key));
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    return j.events;
+  };
+})();
+
+</script>
+<script>
+(function(){
+  const C = STD_CONFIG, $ = id => document.getElementById(id);
+  const K = "std_state_" + STD_GUEST;
+  const QS = new URLSearchParams(location.search);
+  if (QS.get("phone")) document.documentElement.classList.add("noscroll");
+  if (QS.get("fresh")) { try{ localStorage.removeItem(K) }catch(e){} }
+  let st = {}; try{ st = JSON.parse(localStorage.getItem(K)||"{}") }catch(e){}
+  const save = () => { try{ localStorage.setItem(K, JSON.stringify(st)) }catch(e){} };
+
+  $("signDate").textContent = C.dateShort; $("signMono").textContent = C.monogram;
+  $("sealTxt").textContent = C.dateShort;
+  $("loc").innerHTML = C.placeLong + "<br>" + C.dateES + '<span class="en">' + C.dateEN + "</span>";
+  C.photos.forEach((p,i)=>{ if(p) $("ph"+(i+1)).style.backgroundImage = "url('"+p+"')" });
+
+  stdTrack("view");
+
+  // Abrir sobre
+  const scene = $("scene"), env = $("env");
+  function openEnv(){
+    if (scene.classList.contains("open")) return;
+    scene.classList.add("open");
+    st.opened = 1; save(); stdTrack("open");
+    setTimeout(()=>{ $("below").classList.add("show"); glideToQuestions(); }, 5200);
+  }
+  // Baja sola hasta la pantalla de preguntas. Recalcula el destino en cada cuadro y se detiene si la persona toca o hace scroll.
+  function glideToQuestions(){
+    const target = () => document.querySelector("#below .screen").getBoundingClientRect().top + window.scrollY;
+    const start = window.scrollY, t0 = performance.now(), dur = 1100; let stop = false;
+    const cancel = () => { stop = true; };
+    ["touchstart","wheel","mousedown","keydown"].forEach(ev => window.addEventListener(ev, cancel, {once:true, passive:true}));
+    (function step(now){
+      if (stop) return;
+      const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      window.scrollTo(0, start + (target() - start) * e);
+      if (p < 1) requestAnimationFrame(step);
+    })(t0);
+    // red de seguridad: si la animación se frena (pestaña sin foco, ahorro de batería), igual queda alineada al terminar
+    setTimeout(() => { if (!stop) window.scrollTo(0, target()); }, dur + 350);
+  }
+
+  // Ajusta el tamaño del sobre para que el estado ABIERTO (con sus textos) quepa en la pantalla visible de cada teléfono.
+  const probe = document.createElement("div");
+  probe.style.cssText = "position:fixed;left:-9999px;top:0;width:1px;height:100svh;visibility:hidden;pointer-events:none";
+  document.body.appendChild(probe);
+  function fitTop(){
+    const top = document.querySelector(".top"), root = document.documentElement;
+    if (!top) return;
+    root.style.removeProperty("--ew");
+    const nt = document.createElement("style"); nt.textContent = "*{transition:none!important;animation:none!important}.top{min-height:0!important}";
+    document.head.appendChild(nt);
+    const wasOpen = scene.classList.contains("open"); scene.classList.add("open"); void top.offsetHeight;
+    const limit = probe.offsetHeight || window.innerHeight;
+    const ew0 = parseFloat(getComputedStyle(env).width) || 300;
+    let ew = ew0, tries = 0;
+    while (top.getBoundingClientRect().height > limit + 1 && ew > 220 && tries < 8){
+      const over = top.getBoundingClientRect().height - limit;
+      ew = Math.max(220, ew - Math.ceil(over / 1.3) - 2);
+      root.style.setProperty("--ew", ew + "px"); void top.offsetHeight; tries++;
+    }
+    if (ew < ew0 && top.getBoundingClientRect().height <= limit + 1){     // aprovecha el espacio que sobre (sin pasarse)
+      for (let k = 0; k < 12 && ew + 3 <= ew0; k++){
+        root.style.setProperty("--ew", (ew + 3) + "px"); void top.offsetHeight;
+        if (top.getBoundingClientRect().height > limit + 1){ root.style.setProperty("--ew", ew + "px"); void top.offsetHeight; break; }
+        ew += 3;
+      }
+    }
+    if (!wasOpen) scene.classList.remove("open");
+    void top.offsetHeight; nt.remove();
+  }
+  // Pantalla de preguntas: si el contenido (con el mensaje más largo) no cabe en la pantalla visible, se reduce un poco todo.
+  function fitScreen(){
+    const wrap = document.querySelector("#below .wrap"), foot = document.querySelector("#below .foot"), screen = document.querySelector("#below .screen");
+    if (!wrap || !foot || !screen) return;
+    wrap.style.zoom = ""; foot.style.zoom = "";
+    const nt = document.createElement("style");
+    nt.textContent = "*{transition:none!important;animation:none!important}#below{display:block!important;visibility:hidden!important}#below .screen{min-height:0!important}#below .screen::before,#below .screen::after,#below .sp-mid{display:none!important}";
+    document.head.appendChild(nt);
+    const ack = $("ack"), prevHTML = ack.innerHTML, prevCls = ack.className;
+    ack.innerHTML = MSG.si[0] + '<span class="en">' + MSG.si[1] + "</span>"; ack.classList.add("show");   // peor caso: el mensaje más largo
+    const limit = probe.offsetHeight || window.innerHeight;
+    const badge = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--badge")) || 0;
+    let z = 1, tries = 0, natural = screen.getBoundingClientRect().height;
+    while (natural > limit + 1 && z > 0.72 && tries < 6){
+      z = Math.max(0.72, z * (limit - badge) / Math.max(1, (natural - badge)) - 0.005);
+      wrap.style.zoom = z; foot.style.zoom = z; natural = screen.getBoundingClientRect().height; tries++;
+    }
+    ack.innerHTML = prevHTML; ack.className = prevCls; void screen.offsetHeight; nt.remove();
+  }
+  function fitAll(){ fitTop(); fitScreen(); }
+  let fitTimer, lastW = window.innerWidth, lastH = window.innerHeight;
+  const refit = () => {
+    // la barra de Safari al hacer scroll solo cambia la altura unos píxeles: no hace falta recalcular (evitaba un parpadeo)
+    if (window.innerWidth === lastW && Math.abs(window.innerHeight - lastH) < 160) return;
+    lastW = window.innerWidth; lastH = window.innerHeight;
+    clearTimeout(fitTimer); fitTimer = setTimeout(()=>{ if (!scene.classList.contains("open")) fitTop(); fitScreen(); }, 150);
+  };
+  window.addEventListener("load", fitAll);
+  window.addEventListener("resize", refit); window.addEventListener("orientationchange", refit);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAll);
+  $("below").addEventListener("animationend", e => { if (e.target === e.currentTarget) e.currentTarget.classList.add("shown"); });
+  env.addEventListener("click", openEnv);
+  env.addEventListener("keydown", e => { if(e.key==="Enter"||e.key===" "){ e.preventDefault(); openEnv(); }});
+  // Mostrar la sección inferior en cuanto empiece a bajar (sin esperar)
+  setTimeout(()=>{ if(scene.classList.contains("open")) $("below").classList.add("show") }, 2600);
+  window.addEventListener("scroll",()=>{ if(scene.classList.contains("open")) $("below").classList.add("show") },{passive:true});
+
+  // Cuenta regresiva
+  const target = new Date(C.dateISO).getTime();
+  const p2 = n => String(n).padStart(2,"0");
+  function tick(){
+    let d = Math.max(0, target - Date.now());
+    const D = Math.floor(d/864e5); d%=864e5;
+    const H = Math.floor(d/36e5); d%=36e5;
+    const M = Math.floor(d/6e4); d%=6e4;
+    const S = Math.floor(d/1e3);
+    $("count").innerHTML = [D,H,M,S].map((v,i)=>"<div>"+(i?p2(v):v)+"</div>").join("<em>:</em>");
+  }
+  tick(); setInterval(tick,1000);
+
+  // RSVP: primero los datos (se guardan solos al escribir) y después la respuesta (se guarda al tocar).
+  const MSG = {
+    si:["¡Qué emoción! Cuando tengamos los detalles, te mandamos la invitación formal por correo.",
+        "So excited! Once we have the details, we’ll email you the formal invitation."],
+    alla:["¡Nos encanta! Nos vemos allá 🇻🇪"],
+    quizas:["Sin problema. Lo más pronto que puedas, déjanos saber.",
+        "No problem. Let us know as soon as you can."],
+    no:["Gracias por tu respuesta. No te preocupes, te tendremos presente en nuestro día.",
+        "Thank you for your answer. Don’t worry, we’ll keep you in our thoughts on our day."]
+  };
+  const pretty = g => g === "anonimo" ? "" : g.replace(/-/g," ").replace(/\b\w/g,c=>c.toUpperCase());
+  const okEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+  let answer = st.rsvp || null;
+  const snap = st.snap || {};                       // lo último que ya se envió
+  const f = { name:$("aname"), email:$("aemail"), note:$("note") };
+  f.name.value = st.name || pretty(STD_GUEST); f.email.value = st.email || ""; f.note.value = st.note || "";
+
+  function render(){
+    document.querySelectorAll("#choices .btn").forEach(b=>b.classList.toggle("sel", b.dataset.a===answer));
+    $("choices").classList.toggle("answered", !!answer);
+    $("ack").classList.toggle("show", !!answer);
+    if (answer) $("ack").innerHTML = MSG[answer][0] + (MSG[answer][1] ? '<span class="en">' + MSG[answer][1] + "</span>" : "");
+  }
+  let savedTimer;
+  function flashSaved(){ $("saved").classList.add("on"); clearTimeout(savedTimer); savedTimer = setTimeout(()=>$("saved").classList.remove("on"), 2200); }
+  function flush(){
+    const v = { name:f.name.value.trim(), email:f.email.value.trim(), note:f.note.value.trim() };
+    Object.assign(st, v); let sent = false;
+    if (v.note !== (snap.note||"")){ stdTrack("note",{text:v.note, answer}); snap.note = v.note; sent = true; }
+    if (v.name && v.name !== (snap.name||"") && !okEmail(v.email)){ stdTrack("name",{name:v.name}); snap.name = v.name; sent = true; }
+    if (okEmail(v.email) && (v.email!==snap.email || v.name!==snap.name)){
+      stdTrack("email",{name:v.name, email:v.email}); Object.assign(snap,{name:v.name,email:v.email}); sent = true;
+    }
+    st.snap = snap; save(); if (sent) flashSaved();
+  }
+  document.querySelectorAll("#choices .btn").forEach(b=>b.addEventListener("click",()=>{
+    if (answer === b.dataset.a) return;
+    flush();                                         // por si tocan el botón antes de que se guarde lo último
+    answer = b.dataset.a; st.rsvp = answer; save();
+    stdTrack("rsvp",{answer, name:f.name.value.trim()}); render();
+    setTimeout(()=>$("ack").scrollIntoView({behavior:"smooth", block:"nearest"}), 150);
+  }));
+  let t; Object.values(f).forEach(el=>{
+    el.addEventListener("input", ()=>{ clearTimeout(t); t = setTimeout(flush, 1200); });
+    el.addEventListener("blur", flush);
+  });
+  let autoScrolled = false;
+  function goToAnswers(){
+    if (autoScrolled || answer) return; autoScrolled = true;
+    $("choices").scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+  f.name.addEventListener("keydown", e=>{ if (e.key === "Enter"){ e.preventDefault(); f.email.focus(); } });
+  f.email.addEventListener("keydown", e=>{ if (e.key === "Enter"){ e.preventDefault(); f.email.blur(); } });
+  f.email.addEventListener("blur", ()=>setTimeout(()=>{ if (okEmail(f.email.value.trim()) && document.activeElement !== f.note) goToAnswers(); }, 350));
+  document.addEventListener("visibilitychange", ()=>{ if (document.visibilityState === "hidden") flush(); });
+  window.addEventListener("pagehide", flush);
+  render();
+})();
+</script>
+</body>
+</html>
