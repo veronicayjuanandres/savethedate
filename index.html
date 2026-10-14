@@ -473,6 +473,15 @@ html.noscroll::-webkit-scrollbar{display:none}
 /* ===== v23: el "Leave us your updated info" se lee mejor ===== */
 .formtitle .en{font-size:11.5px;letter-spacing:.1em;opacity:.8}
 @media (min-width:900px){ .formtitle .en{font-size:12.5px} }
+/* ===== v24: nombre y correo obligatorios ===== */
+.fld{position:relative;display:block}
+.formrow .fld input{padding-right:20px}
+.fld .req{position:absolute;right:3px;top:50%;transform:translateY(-50%);font:500 17px/1 var(--serif);font-style:normal;color:#B3261E;pointer-events:none;transition:opacity .25s}
+.fld.ok .req{opacity:0}
+.fld.bad input{border-bottom-color:#B3261E}
+.fld.bad{animation:nudge .4s ease}
+@keyframes nudge{0%,100%{transform:none}25%{transform:translateX(-4px)}55%{transform:translateX(4px)}80%{transform:translateX(-2px)}}
+.saved.err{opacity:1;color:#B3261E;text-transform:none;letter-spacing:.03em;font-size:11px;line-height:12px;white-space:nowrap}
 .names-img{display:block;margin:0 auto}
 .names-img img{display:block;width:min(76vw,300px);height:auto;margin:0 auto}
 .arch img{display:block;max-width:82%;max-height:88%;width:auto;height:auto}
@@ -543,8 +552,8 @@ html.noscroll::-webkit-scrollbar{display:none}
           <div class="formtitle">Déjanos tu info actualizada<span class="en"> · Leave us your updated info</span></div>
           <div class="formwrap">
             <div class="formrow">
-              <input id="aname" aria-label="Nombre · Name" placeholder="Nombre · Name" autocomplete="name" enterkeyhint="next">
-              <input id="aemail" type="email" aria-label="Correo · Email" placeholder="Correo · Email" autocomplete="email" inputmode="email" autocapitalize="off" enterkeyhint="go">
+              <span class="fld" id="fname"><input id="aname" aria-label="Nombre · Name" aria-required="true" placeholder="Nombre · Name" autocomplete="name" enterkeyhint="next"><i class="req" aria-hidden="true">*</i></span>
+              <span class="fld" id="femail"><input id="aemail" type="email" aria-label="Correo · Email" aria-required="true" placeholder="Correo · Email" autocomplete="email" inputmode="email" autocapitalize="off" enterkeyhint="go"><i class="req" aria-hidden="true">*</i></span>
             </div>
             <textarea id="note" rows="1" aria-label="Un mensajito (opcional)" placeholder="Un mensajito (opcional) · A little note"></textarea>
             <div class="saved" id="saved">Guardado · Saved ✓</div>
@@ -777,7 +786,26 @@ window.STD_CONFIG = {
     if (answer) $("ack").innerHTML = MSG[answer][0] + (MSG[answer][1] ? '<span class="en">' + MSG[answer][1] + "</span>" : "");
   }
   let savedTimer;
-  function flashSaved(){ $("saved").classList.add("on"); clearTimeout(savedTimer); savedTimer = setTimeout(()=>$("saved").classList.remove("on"), 2200); }
+  const SAVED_TXT = $("saved").innerHTML;
+  const need = () => { const n = f.name.value.trim(), e = f.email.value.trim(); return { n:!!n, e:okEmail(e), eAny:!!e }; };
+  function mark(){
+    const c = need();
+    $("fname").classList.toggle("ok", c.n); $("femail").classList.toggle("ok", c.e);
+    if (c.n) $("fname").classList.remove("bad");
+    if (c.e) $("femail").classList.remove("bad");
+    if (c.n && c.e) clearErr();
+    return c;
+  }
+  function clearErr(){ const sv = $("saved"); if (sv.classList.contains("err")){ sv.classList.remove("err"); sv.innerHTML = SAVED_TXT; } }
+  function showErr(c){
+    const sv = $("saved"); sv.classList.remove("on"); sv.classList.add("err");
+    sv.innerHTML = !c.n && !c.e ? "Completa tu nombre y correo · Add your name and email"
+                 : !c.n ? "Falta tu nombre · Your name is needed"
+                 : c.eAny ? "Revisa tu correo · Check your email" : "Falta tu correo · Your email is needed";
+    [["fname",c.n],["femail",c.e]].forEach(([id,ok])=>{ const el = $(id); el.classList.remove("bad"); void el.offsetWidth; if (!ok) el.classList.add("bad"); });
+    (!c.n ? f.name : f.email).focus();
+  }
+  function flashSaved(){ if ($("saved").classList.contains("err")) return; $("saved").classList.add("on"); clearTimeout(savedTimer); savedTimer = setTimeout(()=>$("saved").classList.remove("on"), 2200); }
   function flush(){
     const v = { name:f.name.value.trim(), email:f.email.value.trim(), note:f.note.value.trim() };
     Object.assign(st, v); let sent = false;
@@ -790,13 +818,15 @@ window.STD_CONFIG = {
   }
   document.querySelectorAll("#choices .btn").forEach(b=>b.addEventListener("click",()=>{
     if (answer === b.dataset.a) return;
-    flush();                                         // por si tocan el botón antes de que se guarde lo último
+    flush();
+    const c = mark();
+    if (!c.n || !c.e){ showErr(c); return; }          // nombre y correo son obligatorios para responder                                         // por si tocan el botón antes de que se guarde lo último
     answer = b.dataset.a; st.rsvp = answer; save();
     stdTrack("rsvp",{answer, name:f.name.value.trim()}); render();
     setTimeout(()=>$("ack").scrollIntoView({behavior:"smooth", block:"nearest"}), 150);
   }));
   let t; Object.values(f).forEach(el=>{
-    el.addEventListener("input", ()=>{ clearTimeout(t); t = setTimeout(flush, 1200); });
+    el.addEventListener("input", ()=>{ mark(); clearTimeout(t); t = setTimeout(flush, 1200); });
     el.addEventListener("blur", flush);
   });
   let autoScrolled = false;
@@ -809,7 +839,7 @@ window.STD_CONFIG = {
   f.email.addEventListener("blur", ()=>setTimeout(()=>{ if (okEmail(f.email.value.trim()) && document.activeElement !== f.note) goToAnswers(); }, 350));
   document.addEventListener("visibilitychange", ()=>{ if (document.visibilityState === "hidden") flush(); });
   window.addEventListener("pagehide", flush);
-  render();
+  mark(); render();
 })();
 </script>
 </body>
