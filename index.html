@@ -495,15 +495,46 @@ html.noscroll::-webkit-scrollbar{display:none}
   #rsvp .q .en{font-size:13px}
   #rsvp .sub{font-size:13px}
   #rsvp .sub.sub-en{font-size:11.5px}
-  #ack{font-size:13px}
-  #ack .en{font-size:11.5px}
+  #rsvp .ack{font-size:13px}
+  #rsvp .ack .en{font-size:11.5px}
   .formwrap ::placeholder{font-size:13px}
   .screen .foot .place,.screen .foot .sign .d,.screen .foot .sign .m{font-size:var(--mini)}
 }
 @media (max-width:899px) and (max-height:720px){ :root{--lab:8.5px;--labEn:8px;--mini:7.5px} }
-/* confirmación "Respuesta guardada" bajo el mensaje */
-.ack .ok{display:block;margin-top:8px;font:500 var(--labEn,9px) var(--f-label);letter-spacing:.2em;text-transform:uppercase;color:var(--olive);font-style:normal;opacity:.9}
-@media (min-width:900px){ .ack .ok{font-size:10.5px;margin-top:10px} }
+/* ===== v26: flujo en tres pasos (opciones → cuestionario → gracias) en un mismo espacio fijo ===== */
+#rsvp .slot{display:grid}
+#rsvp .stg{grid-area:1/1;align-self:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s ease,visibility 0s .3s}
+#rsvp[data-stage="a"] #stA,#rsvp[data-stage="b"] #stB,#rsvp[data-stage="c"] #stC{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .45s ease .15s,visibility 0s}
+#rsvp #stA{align-self:start}
+.step{font:500 8.5px var(--f-label);letter-spacing:.34em;padding-left:.34em;text-align:center;color:var(--ink);opacity:.55;margin-bottom:10px}
+#stA .answerlbl{margin-top:calc(14px + var(--slack)*.2)}
+#stB .formtitle{margin-top:calc(10px + var(--slack)*.1)}
+#stB .formwrap{margin-bottom:6px}
+#stB,#stC{padding-bottom:14px}
+#send{display:flex;flex-direction:column;align-items:center;justify-content:center;width:auto;min-width:150px;max-width:320px;margin:10px auto 0;padding:6px 22px;line-height:1.3;min-height:38px}
+#send .en{margin-top:2px}
+.linkbtn{display:block;margin:8px auto 0;padding:4px 10px;background:none;border:0;cursor:pointer;font:italic 400 12px var(--f-hand);color:var(--ink);opacity:.6;text-decoration:underline;text-underline-offset:3px}
+.linkbtn:hover{opacity:.9}
+.done{text-align:center;margin:calc(14px + var(--slack)*.1) auto 0;max-width:320px}
+.done .tick{display:block;width:30px;height:30px;margin:0 auto 10px;border:1px solid var(--olive);border-radius:50%;color:var(--olive);font:400 14px/28px var(--f-label)}
+.done .t{font-family:var(--f-hand);font-size:16px;line-height:1.25;color:var(--ink)}
+.done .en{display:block;margin-top:3px;font-family:var(--f-hand);font-style:italic;font-size:13.5px;color:var(--olive)}
+@media (max-width:899px){
+  /* el bloque se centra en la pantalla: el espacio que sobra se reparte arriba y abajo */
+  .screen .wrap{flex:1 1 auto;justify-content:center}
+  #send{font-size:8.5px;letter-spacing:.16em}
+  #send .en{font-size:11px}
+  .done .t{font-size:13px}
+  .done .en{font-size:11.5px}
+  .linkbtn{font-size:11.5px}
+}
+@media (min-width:900px){
+  .done .t{font-size:17px}
+  .done .en{font-size:14px}
+  #send{min-height:46px;min-width:170px;font-size:9px}
+  #send .en{font-size:12.5px}
+  .step{font-size:9.5px}
+}
 .names-img{display:block;margin:0 auto}
 .names-img img{display:block;width:min(76vw,300px);height:auto;margin:0 auto}
 .arch img{display:block;max-width:82%;max-height:88%;width:auto;height:auto}
@@ -565,30 +596,51 @@ html.noscroll::-webkit-scrollbar{display:none}
         <div class="count" id="count"></div>
         <div class="units"><span>días<br>days</span><span>horas<br>hours</span><span>min<br>min</span><span>seg<br>sec</span></div>
 
-        <div id="rsvp">
-          <div class="q"><img src="assets/irias-venezuela.svg" alt="¿Irías a Venezuela?"><span class="en">Would you go to Venezuela?</span></div>
-          <div class="dmd"></div>
-          <p class="sub">Solo nos gustaría saber si estarías dispuesto/a a ir. Los detalles van en la invitación formal.</p>
-          <p class="sub sub-en">We would just like to know if you’d be open to coming. The details will come with the formal invitation.</p>
-
-          <div class="formtitle">Déjanos tu info actualizada<span class="en"> · Leave us your updated info</span></div>
-          <div class="formwrap">
-            <div class="formrow">
-              <span class="fld" id="fname"><input id="aname" aria-label="Nombre · Name" aria-required="true" placeholder="Nombre · Name" autocomplete="name" enterkeyhint="next"><i class="req" aria-hidden="true">*</i></span>
-              <span class="fld" id="femail"><input id="aemail" type="email" aria-label="Correo · Email" aria-required="true" placeholder="Correo · Email" autocomplete="email" inputmode="email" autocapitalize="off" enterkeyhint="go"><i class="req" aria-hidden="true">*</i></span>
+        <div id="rsvp" data-stage="a">
+          <div class="slot">
+            <!-- paso 1 de 2: la pregunta, la descripción, las opciones y, debajo, el mensajito de su respuesta -->
+            <div class="stg" id="stA">
+              <div class="step">1 / 2</div>
+              <div class="q"><img src="assets/irias-venezuela.svg" alt="¿Irías a Venezuela?"><span class="en">Would you go to Venezuela?</span></div>
+              <div class="dmd"></div>
+              <p class="sub">Solo nos gustaría saber si estarías dispuesto/a a ir. Los detalles van en la invitación formal.</p>
+              <p class="sub sub-en">We would just like to know if you’d be open to coming. The details will come with the formal invitation.</p>
+              <div class="answerlbl">Tu respuesta · Your answer ↓</div>
+              <div class="choices" id="choices">
+                <button class="btn" data-a="si">Sí, me encantaría ir<span class="en">Yes, I’d love to</span></button>
+                <button class="btn" data-a="alla">Ya estoy en Venezuela</button>
+                <button class="btn" data-a="quizas">Todavía no sé<span class="en">I’m not sure yet</span></button>
+                <button class="btn" data-a="no">No creo poder ir<span class="en">I don’t think I can</span></button>
+              </div>
+              <div class="ack" id="ackA" aria-live="polite"></div>
             </div>
-            <textarea id="note" rows="1" aria-label="Un mensajito (opcional)" placeholder="Un mensajito (opcional) · A little note"></textarea>
-            <div class="saved" id="saved">Guardado · Saved ✓</div>
-          </div>
 
-          <div class="answerlbl">Tu respuesta · Your answer ↓</div>
-          <div class="choices" id="choices">
-            <button class="btn" data-a="si">Sí, me encantaría ir<span class="en">Yes, I’d love to</span></button>
-            <button class="btn" data-a="alla">Ya estoy en Venezuela</button>
-            <button class="btn" data-a="quizas">Todavía no sé<span class="en">I’m not sure yet</span></button>
-            <button class="btn" data-a="no">No creo poder ir<span class="en">I don’t think I can</span></button>
+            <!-- paso 2 de 2: el cuestionario (reemplaza al paso 1) -->
+            <div class="stg" id="stB">
+              <div class="step">2 / 2</div>
+              <div class="formtitle">Déjanos tu info actualizada<span class="en"> · Leave us your updated info</span></div>
+              <div class="formwrap">
+                <div class="formrow">
+                  <span class="fld" id="fname"><input id="aname" aria-label="Nombre · Name" aria-required="true" placeholder="Nombre · Name" autocomplete="name" enterkeyhint="next"><i class="req" aria-hidden="true">*</i></span>
+                  <span class="fld" id="femail"><input id="aemail" type="email" aria-label="Correo · Email" aria-required="true" placeholder="Correo · Email" autocomplete="email" inputmode="email" autocapitalize="off" enterkeyhint="go"><i class="req" aria-hidden="true">*</i></span>
+                </div>
+                <textarea id="note" rows="1" aria-label="Un mensajito (opcional)" placeholder="Un mensajito (opcional) · A little note"></textarea>
+                <div class="saved" id="saved">Guardado · Saved ✓</div>
+              </div>
+              <button class="btn solid" id="send" type="button">Enviar<span class="en">Send</span></button>
+              <button class="linkbtn" id="chgAns" type="button">Cambiar mi respuesta · Change my answer</button>
+            </div>
+
+            <!-- paso 3: gracias -->
+            <div class="stg" id="stC">
+              <div class="done">
+                <span class="tick" aria-hidden="true">✓</span>
+                <div class="t">Gracias, tu información ha sido guardada</div>
+                <span class="en">Thank you, your information has been saved</span>
+                <button class="linkbtn" id="editInfo" type="button">Editar mi información · Edit my info</button>
+              </div>
+            </div>
           </div>
-          <div class="ack" id="ack" aria-live="polite"></div>
         </div>
       </div>
 
@@ -742,8 +794,8 @@ window.STD_CONFIG = {
     const nt = document.createElement("style");
     nt.textContent = "*{transition:none!important;animation:none!important}#below{display:block!important;visibility:hidden!important}#below .screen{min-height:0!important}#below .screen::before,#below .screen::after,#below .sp-mid{display:none!important}";
     document.head.appendChild(nt);
-    const ack = $("ack"), prevHTML = ack.innerHTML, prevCls = ack.className;
-    ack.innerHTML = ackHTML("si"); ack.classList.add("show");   // peor caso: el mensaje más largo
+    const ackA = $("ackA"), prevA = ackA.innerHTML;
+    ackA.innerHTML = ackHTML("si");   // peor caso: el mensaje más largo
     const limit = probe.offsetHeight || window.innerHeight;
     const badge = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--badge")) || 0;
     let z = 1, tries = 0, natural = screen.getBoundingClientRect().height;
@@ -751,7 +803,7 @@ window.STD_CONFIG = {
       z = Math.max(0.72, z * (limit - badge) / Math.max(1, (natural - badge)) - 0.005);
       wrap.style.zoom = z; foot.style.zoom = z; natural = screen.getBoundingClientRect().height; tries++;
     }
-    ack.innerHTML = prevHTML; ack.className = prevCls; void screen.offsetHeight; nt.remove();
+    ackA.innerHTML = prevA; void screen.offsetHeight; nt.remove();
   }
   function fitAll(){ fitTop(); fitScreen(); }
   let fitTimer, lastW = window.innerWidth, lastH = window.innerHeight;
@@ -803,13 +855,13 @@ window.STD_CONFIG = {
 
   // mensaje de respuesta + confirmación de que quedó guardada
   function ackHTML(a){
-    return MSG[a][0] + (MSG[a][1] ? '<span class="en">' + MSG[a][1] + "</span>" : "") + '<span class="ok">Respuesta guardada · Answer saved ✓</span>';
+    return MSG[a][0] + (MSG[a][1] ? '<span class="en">' + MSG[a][1] + "</span>" : "");
   }
   function render(){
     document.querySelectorAll("#choices .btn").forEach(b=>b.classList.toggle("sel", b.dataset.a===answer));
     $("choices").classList.toggle("answered", !!answer);
-    $("ack").classList.toggle("show", !!answer);
-    if (answer) $("ack").innerHTML = ackHTML(answer);
+    $("ackA").classList.toggle("show", !!answer);
+    if (answer) $("ackA").innerHTML = ackHTML(answer);
   }
   let savedTimer;
   const SAVED_TXT = $("saved").innerHTML;
@@ -842,30 +894,43 @@ window.STD_CONFIG = {
     }
     st.snap = snap; save(); if (sent) flashSaved();
   }
+  // ----- pasos: a = opciones, b = cuestionario, c = gracias -----
+  const rs = $("rsvp"), HOLD = 1800;
+  let advT;
+  function setStage(next){ rs.dataset.stage = next; }   // el cambio es un fundido en CSS: cada paso ocupa el mismo espacio
+  // tocar una opción: se guarda, sale el mensajito debajo y enseguida pasa al cuestionario
   document.querySelectorAll("#choices .btn").forEach(b=>b.addEventListener("click",()=>{
-    if (answer === b.dataset.a) return;
-    flush();
-    const c = mark();
-    if (!c.n || !c.e){ showErr(c); return; }          // nombre y correo son obligatorios para responder                                         // por si tocan el botón antes de que se guarde lo último
-    answer = b.dataset.a; st.rsvp = answer; save();
-    stdTrack("rsvp",{answer, name:f.name.value.trim()}); render();
-    setTimeout(()=>$("ack").scrollIntoView({behavior:"smooth", block:"nearest"}), 150);
+    const a = b.dataset.a;
+    if (a !== answer){
+      answer = a; st.rsvp = a; st.done = false; save();
+      stdTrack("rsvp",{answer, name:f.name.value.trim()});
+    }
+    render();
+    setTimeout(()=>$("ackA").scrollIntoView({behavior:"smooth", block:"nearest"}), 150);
+    clearTimeout(advT); advT = setTimeout(()=>setStage("b"), HOLD);
   }));
+
+  // botón Enviar: nombre y correo son obligatorios
+  function submit(){
+    clearTimeout(t); flush();
+    const c = mark();
+    if (!c.n || !c.e){ showErr(c); return; }
+    st.done = true; save(); setStage("c");
+  }
+  $("send").addEventListener("click", submit);
+  $("chgAns").addEventListener("click", ()=>{ clearTimeout(advT); setStage("a"); });
+  $("editInfo").addEventListener("click", ()=>{ st.done = false; save(); setStage("b"); });
+
   let t; Object.values(f).forEach(el=>{
     el.addEventListener("input", ()=>{ mark(); clearTimeout(t); t = setTimeout(flush, 1200); });
     el.addEventListener("blur", flush);
   });
-  let autoScrolled = false;
-  function goToAnswers(){
-    if (autoScrolled || answer) return; autoScrolled = true;
-    $("choices").scrollIntoView({behavior:"smooth", block:"nearest"});
-  }
   f.name.addEventListener("keydown", e=>{ if (e.key === "Enter"){ e.preventDefault(); f.email.focus(); } });
-  f.email.addEventListener("keydown", e=>{ if (e.key === "Enter"){ e.preventDefault(); f.email.blur(); } });
-  f.email.addEventListener("blur", ()=>setTimeout(()=>{ if (okEmail(f.email.value.trim()) && document.activeElement !== f.note) goToAnswers(); }, 350));
+  f.email.addEventListener("keydown", e=>{ if (e.key === "Enter"){ e.preventDefault(); f.email.blur(); submit(); } });
   document.addEventListener("visibilitychange", ()=>{ if (document.visibilityState === "hidden") flush(); });
   window.addEventListener("pagehide", flush);
   mark(); render();
+  setStage(st.done ? "c" : (answer ? "b" : "a"));   // quien ya respondió vuelve donde se quedó
 })();
 </script>
 </body>
