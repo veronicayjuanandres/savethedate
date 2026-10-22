@@ -512,16 +512,18 @@ html.noscroll::-webkit-scrollbar{display:none}
   .screen .foot .place,.screen .foot .sign .d,.screen .foot .sign .m{font-size:var(--mini)}
 }
 @media (max-width:899px) and (max-height:720px){ :root{--lab:8.5px;--labEn:8px;--mini:7.5px} }
-/* ===== v26: flujo en tres pasos (opciones → cuestionario → gracias) en un mismo espacio fijo ===== */
+/* ===== v26/v27: flujo en tres pasos (tu info → ¿Irías a Venezuela? → gracias) en un mismo espacio fijo ===== */
 #rsvp .slot{display:grid}
 #rsvp .stg{grid-area:1/1;align-self:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s ease,visibility 0s .3s}
 #rsvp[data-stage="a"] #stA,#rsvp[data-stage="b"] #stB,#rsvp[data-stage="c"] #stC{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .45s ease .15s,visibility 0s}
-#rsvp #stA{align-self:start}
+#rsvp #stB{align-self:start}
 .step{font:500 8.5px var(--f-label);letter-spacing:.34em;padding-left:.34em;text-align:center;color:var(--ink);opacity:.55;margin-bottom:10px}
-#stA .answerlbl{margin-top:calc(14px + var(--slack)*.2)}
-#stB .formtitle{margin-top:calc(10px + var(--slack)*.1)}
-#stB .formwrap{margin-bottom:6px}
-#stB,#stC{padding-bottom:14px}
+#stB .answerlbl{margin-top:calc(14px + var(--slack)*.2)}
+#stA .formtitle{margin-top:calc(10px + var(--slack)*.1)}
+#stC .ack{min-height:0;margin-top:calc(14px + var(--slack)*.08)}
+.done .linkbtn{margin-top:6px}
+#stA .formwrap{margin-bottom:6px}
+#stA,#stC{padding-bottom:14px}
 #send{display:flex;flex-direction:column;align-items:center;justify-content:center;width:auto;min-width:150px;max-width:320px;margin:10px auto 0;padding:6px 22px;line-height:1.3;min-height:38px}
 #send .en{margin-top:2px}
 .linkbtn{display:block;margin:8px auto 0;padding:4px 10px;background:none;border:0;cursor:pointer;font:italic 400 12px var(--f-hand);color:var(--ink);opacity:.6;text-decoration:underline;text-underline-offset:3px}
@@ -609,9 +611,24 @@ html.noscroll::-webkit-scrollbar{display:none}
 
         <div id="rsvp" data-stage="a">
           <div class="slot">
-            <!-- paso 1 de 2: la pregunta, la descripción, las opciones y, debajo, el mensajito de su respuesta -->
+            <!-- paso 1 de 2: tu información -->
             <div class="stg" id="stA">
               <div class="step">1 / 2</div>
+              <div class="formtitle">Déjanos tu info actualizada<span class="en"> · Leave us your updated info</span></div>
+              <div class="formwrap">
+                <div class="formrow">
+                  <span class="fld" id="fname"><input id="aname" aria-label="Nombre · Name" aria-required="true" placeholder="Nombre · Name" autocomplete="name" enterkeyhint="next"><i class="req" aria-hidden="true">*</i></span>
+                  <span class="fld" id="femail"><input id="aemail" type="email" aria-label="Correo · Email" aria-required="true" placeholder="Correo · Email" autocomplete="email" inputmode="email" autocapitalize="off" enterkeyhint="go"><i class="req" aria-hidden="true">*</i></span>
+                </div>
+                <textarea id="note" rows="1" aria-label="Un mensajito (opcional)" placeholder="Un mensajito (opcional) · A little note"></textarea>
+                <div class="saved" id="saved">Guardado · Saved ✓</div>
+              </div>
+              <button class="btn solid" id="send" type="button">Continuar<span class="en">Continue</span></button>
+            </div>
+
+            <!-- paso 2 de 2: la pregunta, la descripción, las opciones y, debajo, el mensajito de su respuesta -->
+            <div class="stg" id="stB">
+              <div class="step">2 / 2</div>
               <div class="q"><img src="assets/irias-venezuela.svg" alt="¿Irías a Venezuela?"><span class="en">Would you go to Venezuela?</span></div>
               <div class="dmd"></div>
               <p class="sub">Solo nos gustaría saber si estarías dispuesto/a a ir. Los detalles van en la invitación formal.</p>
@@ -624,30 +641,17 @@ html.noscroll::-webkit-scrollbar{display:none}
                 <button class="btn" data-a="no">No creo poder ir<span class="en">I don’t think I can</span></button>
               </div>
               <div class="ack" id="ackA" aria-live="polite"></div>
+              <button class="linkbtn" id="backInfo" type="button">Editar mi información · Edit my info</button>
             </div>
 
-            <!-- paso 2 de 2: el cuestionario (reemplaza al paso 1) -->
-            <div class="stg" id="stB">
-              <div class="step">2 / 2</div>
-              <div class="formtitle">Déjanos tu info actualizada<span class="en"> · Leave us your updated info</span></div>
-              <div class="formwrap">
-                <div class="formrow">
-                  <span class="fld" id="fname"><input id="aname" aria-label="Nombre · Name" aria-required="true" placeholder="Nombre · Name" autocomplete="name" enterkeyhint="next"><i class="req" aria-hidden="true">*</i></span>
-                  <span class="fld" id="femail"><input id="aemail" type="email" aria-label="Correo · Email" aria-required="true" placeholder="Correo · Email" autocomplete="email" inputmode="email" autocapitalize="off" enterkeyhint="go"><i class="req" aria-hidden="true">*</i></span>
-                </div>
-                <textarea id="note" rows="1" aria-label="Un mensajito (opcional)" placeholder="Un mensajito (opcional) · A little note"></textarea>
-                <div class="saved" id="saved">Guardado · Saved ✓</div>
-              </div>
-              <button class="btn solid" id="send" type="button">Enviar<span class="en">Send</span></button>
-              <button class="linkbtn" id="chgAns" type="button">Cambiar mi respuesta · Change my answer</button>
-            </div>
-
-            <!-- paso 3: gracias -->
+            <!-- final: gracias -->
             <div class="stg" id="stC">
               <div class="done">
                 <span class="tick" aria-hidden="true">✓</span>
                 <div class="t">Gracias, tu información ha sido guardada</div>
                 <span class="en">Thank you, your information has been saved</span>
+                <div class="ack" id="ackC"></div>
+                <button class="linkbtn" id="chgAns" type="button">Cambiar mi respuesta · Change my answer</button>
                 <button class="linkbtn" id="editInfo" type="button">Editar mi información · Edit my info</button>
               </div>
             </div>
@@ -805,8 +809,8 @@ window.STD_CONFIG = {
     const nt = document.createElement("style");
     nt.textContent = "*{transition:none!important;animation:none!important}#below{display:block!important;visibility:hidden!important}#below .screen{min-height:0!important}#below .screen::before,#below .screen::after,#below .sp-mid{display:none!important}";
     document.head.appendChild(nt);
-    const ackA = $("ackA"), prevA = ackA.innerHTML;
-    ackA.innerHTML = ackHTML("si");   // peor caso: el mensaje más largo
+    const ackA = $("ackA"), ackC = $("ackC"), prevA = ackA.innerHTML, prevC = ackC.innerHTML;
+    ackA.innerHTML = ackC.innerHTML = ackHTML("si");   // peor caso: el mensaje más largo
     const limit = probe.offsetHeight || window.innerHeight;
     const badge = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--badge")) || 0;
     let z = 1, tries = 0, natural = screen.getBoundingClientRect().height;
@@ -814,7 +818,7 @@ window.STD_CONFIG = {
       z = Math.max(0.72, z * (limit - badge) / Math.max(1, (natural - badge)) - 0.005);
       wrap.style.zoom = z; foot.style.zoom = z; natural = screen.getBoundingClientRect().height; tries++;
     }
-    ackA.innerHTML = prevA; void screen.offsetHeight; nt.remove();
+    ackA.innerHTML = prevA; ackC.innerHTML = prevC; void screen.offsetHeight; nt.remove();
   }
   function fitAll(){ fitTop(); fitScreen(); }
   let fitTimer, lastW = window.innerWidth, lastH = window.innerHeight;
@@ -871,8 +875,7 @@ window.STD_CONFIG = {
   function render(){
     document.querySelectorAll("#choices .btn").forEach(b=>b.classList.toggle("sel", b.dataset.a===answer));
     $("choices").classList.toggle("answered", !!answer);
-    $("ackA").classList.toggle("show", !!answer);
-    if (answer) $("ackA").innerHTML = ackHTML(answer);
+    ["ackA","ackC"].forEach(id => { $(id).classList.toggle("show", !!answer); if (answer) $(id).innerHTML = ackHTML(answer); });
   }
   let savedTimer;
   const SAVED_TXT = $("saved").innerHTML;
@@ -905,43 +908,45 @@ window.STD_CONFIG = {
     }
     st.snap = snap; save(); if (sent) flashSaved();
   }
-  // ----- pasos: a = opciones, b = cuestionario, c = gracias -----
-  const rs = $("rsvp"), HOLD = 1800;
+  // ----- pasos: a = tu info, b = ¿Irías a Venezuela?, c = gracias -----
+  const rs = $("rsvp"), HOLD = 1600;
   let advT;
   function setStage(next){ rs.dataset.stage = next; }   // el cambio es un fundido en CSS: cada paso ocupa el mismo espacio
-  // tocar una opción: se guarda, sale el mensajito debajo y enseguida pasa al cuestionario
+
+  // paso 1: Continuar. Nombre y correo son obligatorios
+  function goOn(){
+    clearTimeout(t); flush();
+    const c = mark();
+    if (!c.n || !c.e){ showErr(c); return; }
+    st.infoOk = true; save(); setStage("b");
+  }
+  $("send").addEventListener("click", goOn);
+
+  // paso 2: tocar una opción. Se guarda, sale el mensajito debajo y enseguida pasa al "gracias"
   document.querySelectorAll("#choices .btn").forEach(b=>b.addEventListener("click",()=>{
     const a = b.dataset.a;
     if (a !== answer){
-      answer = a; st.rsvp = a; st.done = false; save();
+      answer = a; st.rsvp = a; save();
       stdTrack("rsvp",{answer, name:f.name.value.trim()});
     }
     render();
     setTimeout(()=>$("ackA").scrollIntoView({behavior:"smooth", block:"nearest"}), 150);
-    clearTimeout(advT); advT = setTimeout(()=>setStage("b"), HOLD);
+    clearTimeout(advT); advT = setTimeout(()=>{ st.done = true; save(); setStage("c"); }, HOLD);
   }));
-
-  // botón Enviar: nombre y correo son obligatorios
-  function submit(){
-    clearTimeout(t); flush();
-    const c = mark();
-    if (!c.n || !c.e){ showErr(c); return; }
-    st.done = true; save(); setStage("c");
-  }
-  $("send").addEventListener("click", submit);
-  $("chgAns").addEventListener("click", ()=>{ clearTimeout(advT); setStage("a"); });
-  $("editInfo").addEventListener("click", ()=>{ st.done = false; save(); setStage("b"); });
+  $("backInfo").addEventListener("click", ()=>{ clearTimeout(advT); setStage("a"); });
+  $("chgAns").addEventListener("click", ()=>{ setStage("b"); });
+  $("editInfo").addEventListener("click", ()=>{ setStage("a"); });
 
   let t; Object.values(f).forEach(el=>{
     el.addEventListener("input", ()=>{ mark(); clearTimeout(t); t = setTimeout(flush, 1200); });
     el.addEventListener("blur", flush);
   });
   f.name.addEventListener("keydown", e=>{ if (e.key === "Enter"){ e.preventDefault(); f.email.focus(); } });
-  f.email.addEventListener("keydown", e=>{ if (e.key === "Enter"){ e.preventDefault(); f.email.blur(); submit(); } });
+  f.email.addEventListener("keydown", e=>{ if (e.key === "Enter"){ e.preventDefault(); f.email.blur(); goOn(); } });
   document.addEventListener("visibilitychange", ()=>{ if (document.visibilityState === "hidden") flush(); });
   window.addEventListener("pagehide", flush);
   mark(); render();
-  setStage(st.done ? "c" : (answer ? "b" : "a"));   // quien ya respondió vuelve donde se quedó
+  setStage(st.done && answer ? "c" : (st.infoOk ? "b" : "a"));   // quien ya avanzó vuelve donde se quedó
 })();
 </script>
 </body>
