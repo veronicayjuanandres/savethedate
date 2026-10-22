@@ -861,12 +861,13 @@ window.STD_CONFIG = {
     no:["Gracias por tu respuesta. No te preocupes, te tendremos presente en nuestro día.",
         "Thank you for your answer. Don’t worry, we’ll keep you in our thoughts on our day."]
   };
-  const pretty = g => g === "anonimo" ? "" : g.replace(/-/g," ").replace(/\b\w/g,c=>c.toUpperCase());
+  const pretty = g => g === "anonimo" ? "" : g.replace(/-/g," ").replace(/\b\w/g,c=>c.toUpperCase()).replace(/ Y /g," y ");   // "fernando-y-ma" -> "Fernando y Ma"
   const okEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
   let answer = st.rsvp || null;
   const snap = st.snap || {};                       // lo último que ya se envió
   const f = { name:$("aname"), email:$("aemail"), note:$("note") };
-  f.name.value = st.name || pretty(STD_GUEST); f.email.value = st.email || ""; f.note.value = st.note || "";
+  f.name.value = st.name || (QS.get("n") ? pretty(STD_GUEST) : ""); f.email.value = st.email || ""; f.note.value = st.note || "";
+  if (snap.name === undefined) snap.name = f.name.value.trim();   // el nombre que ya viene del link no se manda solo: así no cuenta como "abrió el sobre" ni como respuesta
 
   // mensaje de respuesta + confirmación de que quedó guardada
   function ackHTML(a){
