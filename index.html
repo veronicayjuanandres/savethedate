@@ -45,7 +45,7 @@
 
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{background:var(--wine-d);-webkit-text-size-adjust:100%;text-size-adjust:100%}
-body{background:var(--wine-d);color:var(--paper);font-family:var(--f-serif);min-height:var(--h);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{background:var(--wine-d);color:var(--paper);font-family:var(--f-serif);min-height:var(--h);overflow-x:hidden;-webkit-font-smoothing:antialiased;font-variant-numeric:lining-nums}
 button{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--orange);outline-offset:3px}
 html.noscroll{scrollbar-width:none}
@@ -132,7 +132,7 @@ html.noscroll::-webkit-scrollbar{display:none}
 .screen{position:relative;min-height:var(--h);display:flex;flex-direction:column;align-items:center;
   padding:calc(18 * var(--u)) calc(20 * var(--u)) calc(10 * var(--u) + env(safe-area-inset-bottom))}
 @supports (height:100dvh){ .screen{min-height:100dvh} }
-.wrap{width:100%;max-width:calc(334 * var(--u));margin-block:auto;position:relative;z-index:1}
+.wrap{width:100%;max-width:calc(334 * var(--u));margin-block:auto}
 
 .join{font-family:var(--f-label);font-weight:500;font-size:calc(9 * var(--u));letter-spacing:.24em;line-height:1.5;text-transform:uppercase;opacity:.9}
 .join .en{font-style:normal;text-transform:uppercase;font-size:calc(9 * var(--u));letter-spacing:.16em;margin-top:calc(2 * var(--u))}
@@ -208,18 +208,20 @@ textarea{display:block;resize:none;height:calc(36 * var(--u));margin-top:calc(6 
 .ack .en{font-size:calc(11.5 * var(--u));color:var(--olive);opacity:1;margin-top:calc(3 * var(--u))}
 
 /* final: gracias */
-.done{margin:calc(14 * var(--u)) auto 0;max-width:calc(320 * var(--u))}
+#stC{position:absolute;top:0;left:0;right:0;height:min(100%, var(--h));display:grid;place-items:center;padding:0;pointer-events:none}   /* centrado en lo que se ve de la pantalla */
+.done{max-width:calc(320 * var(--u))}
 .tick{display:block;width:calc(30 * var(--u));height:calc(30 * var(--u));margin:0 auto calc(10 * var(--u));border:1px solid var(--olive);border-radius:50%;
   color:var(--olive);font-family:var(--f-label);font-size:calc(14 * var(--u));line-height:calc(28 * var(--u))}
 .done .t{font-size:calc(13 * var(--u));line-height:1.25}
 .done .en{font-size:calc(11.5 * var(--u));color:var(--olive);opacity:1;margin-top:calc(3 * var(--u))}
-.remember .dmd{margin:calc(16 * var(--u)) auto calc(12 * var(--u))}
-.remember .lbl{font-family:var(--f-label);font-weight:500;font-size:calc(9.5 * var(--u));letter-spacing:.26em;text-transform:uppercase;opacity:.85}
-.remember .date{font-size:calc(16 * var(--u));line-height:1.2;margin-top:calc(6 * var(--u))}
-.remember .date.en{font-size:calc(13 * var(--u));color:var(--olive);opacity:1;margin-top:calc(2 * var(--u))}
+/* los enlaces de corregir viven abajo, juntos entre sí y cerca de la silueta; solo se ven en la pantalla de gracias y no mueven nada */
+.fixes{position:absolute;left:0;right:0;bottom:100%;z-index:2;padding-bottom:calc(30 * var(--u));
+  opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s ease,visibility 0s .3s}
+.fixes .linkbtn{margin:0 auto;min-height:calc(30 * var(--u));padding:calc(6 * var(--u)) calc(10 * var(--u))}
+html[data-stage="c"] .fixes{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .45s ease .15s,visibility 0s}
 
 /* pie */
-.foot{flex:none;width:100%;text-align:center;padding-top:calc(10 * var(--u))}
+.foot{position:relative;flex:none;width:100%;text-align:center;padding-top:calc(10 * var(--u))}
 .skyline{display:block;width:calc(140 * var(--u));height:auto;margin:0 auto}
 .place{font-family:var(--f-label);font-size:calc(9 * var(--u));letter-spacing:.3em;text-transform:uppercase;margin-top:calc(8 * var(--u))}
 .place i{display:inline-block;width:calc(4 * var(--u));height:calc(4 * var(--u));background:var(--orange);transform:rotate(45deg);margin:0 calc(10 * var(--u)) calc(2 * var(--u))}
@@ -319,14 +321,6 @@ textarea{display:block;resize:none;height:calc(36 * var(--u));margin-top:calc(6 
                 <span class="tick" aria-hidden="true">✓</span>
                 <div class="t">Gracias, tu información ha sido guardada</div>
                 <span class="en">Thank you, your information has been saved</span>
-                <div class="remember">
-                  <div class="dmd"></div>
-                  <div class="lbl">Recuerda · Remember</div>
-                  <div class="date" id="remES"></div>
-                  <div class="date en" id="remEN"></div>
-                </div>
-                <button class="linkbtn" id="chgAns" type="button">Cambiar mi respuesta · Change my answer</button>
-                <button class="linkbtn" id="editInfo" type="button">Editar mi información · Edit my info</button>
               </div>
             </div>
           </div>
@@ -334,6 +328,10 @@ textarea{display:block;resize:none;height:calc(36 * var(--u));margin-top:calc(6 
       </div>
 
       <div class="foot">
+        <div class="fixes">
+          <button class="linkbtn" id="chgAns" type="button">Cambiar mi respuesta · Change my answer</button>
+          <button class="linkbtn" id="editInfo" type="button">Editar mi información · Edit my info</button>
+        </div>
         <img class="skyline" src="assets/caracas-wine.png" alt="Silueta de Caracas con el Ávila">
         <div class="place">Caracas<i></i>Venezuela</div>
         <div class="sign"><div class="d" id="signDate"></div><div class="m" id="signMono"></div></div>
@@ -416,7 +414,6 @@ window.STD_CONFIG = {
 
   $("signDate").textContent = C.dateShort; $("signMono").textContent = C.monogram;
   $("sealTxt").textContent = C.dateShort;
-  $("remES").textContent = C.dateES; $("remEN").textContent = C.dateEN;
   $("loc").innerHTML = C.placeLong + "<br>" + C.dateES + '<span class="en">' + C.dateEN + "</span>";
   // en computadora (mouse) se dice "haz clic"; en pantallas táctiles, "toca"
   if (window.matchMedia && matchMedia("(hover:hover) and (pointer:fine)").matches)
@@ -574,7 +571,7 @@ window.STD_CONFIG = {
   const rs = $("rsvp");
   const holdFor = a => Math.min(4600, 1800 + 14 * ((MSG[a][0]||"").length + (MSG[a][1]||"").length));   // da tiempo de leer el mensaje antes de pasar al "gracias"
   let advT;
-  function setStage(next){ rs.dataset.stage = next; }   // el cambio es un fundido en CSS: cada paso ocupa el mismo espacio
+  function setStage(next){ rs.dataset.stage = next; document.documentElement.dataset.stage = next; }   // el cambio es un fundido en CSS: cada paso ocupa el mismo espacio
 
   // paso 1: Continuar. Nombre y correo son obligatorios
   function goOn(){
