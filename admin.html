@@ -90,8 +90,17 @@ window.STD_CONFIG = {
 
   window.STD_GUEST = guest;
 
+  // Identificador de este dispositivo: asi, varias personas con el MISMO link (por ejemplo un grupo familiar) quedan en filas distintas.
+  const PID = (function () {
+    try {
+      let p = localStorage.getItem("std_pid");
+      if (!p) { p = "p" + Math.random().toString(36).slice(2, 12) + Date.now().toString(36).slice(-3); localStorage.setItem("std_pid", p); }
+      return p;
+    } catch (e) { return "p" + Math.random().toString(36).slice(2, 10); }
+  })();
+
   window.stdTrack = function (type, data) {
-    const ev = { t: new Date().toISOString(), guest, type, data: data || {}, ua: navigator.userAgent.slice(0, 120) };
+    const ev = { t: new Date().toISOString(), guest, type, data: data || {}, ua: navigator.userAgent.slice(0, 120), pid: PID };
     if (!C.apiUrl) {
       try {
         const all = JSON.parse(localStorage.getItem(LS) || "[]");
@@ -135,7 +144,8 @@ async function load(key){
   const ev = await stdFetchAll(key);
   const g = {}, mails = [], lastMail = {};
   ev.forEach(e=>{
-    const x = g[e.guest] ||= {guest:e.guest,name:"",views:0,open:false,rsvp:null,note:"",addr:null,last:e.t};
+    const k = e.guest + "|" + (e.pid || "");                       // una persona = un link + un dispositivo (varios familiares pueden compartir link)
+    const x = g[k] ||= {guest:e.guest,name:"",views:0,open:false,rsvp:null,note:"",addr:null,last:e.t};
     if (e.t > x.last) x.last = e.t;
     if (e.type==="view") x.views++;
     if (e.type==="open") x.open = true;
@@ -143,7 +153,7 @@ async function load(key){
     if (e.type==="rsvp"){ x.open = true; x.rsvp = e.data.answer; if (e.data.note) x.note = e.data.note; if (e.data.name) x.name = e.data.name; }
     if (e.type==="name"){ x.open = true; x.name = e.data.name||x.name; }
     if (e.type==="note"){ x.open = true; x.note = e.data.text||""; }          // se guarda mientras escriben: gana el último
-    if (e.type==="email"){ x.open = true; x.addr = e.data; if (e.data.name) x.name = e.data.name; lastMail[e.guest] = {guest:e.guest,t:e.t,...e.data}; }
+    if (e.type==="email"){ x.open = true; x.addr = e.data; if (e.data.name) x.name = e.data.name; lastMail[k] = {guest:e.guest,t:e.t,...e.data}; }
   });
   mails.push(...Object.values(lastMail));
   const list = Object.values(g).sort((a,b)=>b.last.localeCompare(a.last));

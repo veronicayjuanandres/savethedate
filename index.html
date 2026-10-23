@@ -370,8 +370,17 @@ window.STD_CONFIG = {
 
   window.STD_GUEST = guest;
 
+  // Identificador de este dispositivo: asi, varias personas con el MISMO link (por ejemplo un grupo familiar) quedan en filas distintas.
+  const PID = (function () {
+    try {
+      let p = localStorage.getItem("std_pid");
+      if (!p) { p = "p" + Math.random().toString(36).slice(2, 12) + Date.now().toString(36).slice(-3); localStorage.setItem("std_pid", p); }
+      return p;
+    } catch (e) { return "p" + Math.random().toString(36).slice(2, 10); }
+  })();
+
   window.stdTrack = function (type, data) {
-    const ev = { t: new Date().toISOString(), guest, type, data: data || {}, ua: navigator.userAgent.slice(0, 120) };
+    const ev = { t: new Date().toISOString(), guest, type, data: data || {}, ua: navigator.userAgent.slice(0, 120), pid: PID };
     if (!C.apiUrl) {
       try {
         const all = JSON.parse(localStorage.getItem(LS) || "[]");
