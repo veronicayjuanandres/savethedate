@@ -28,6 +28,27 @@ tr:last-child td{border-bottom:0}
 .row{display:flex;gap:8px}.row>*{flex:1}.row button{flex:0 0 auto}
 .mut{color:var(--mut)}.small{font-size:12px}
 #links td:last-child{word-break:break-all}
+.tbl{overflow-x:auto;border-radius:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.chip{padding:7px 13px;border-radius:99px;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:13px}
+.chip.on{background:var(--wine);color:#fff;border-color:var(--wine)}
+.chip b{font-weight:600;margin-left:4px}
+tr.g{cursor:pointer}tr.g:hover td{background:#fcfaf5}
+tr.g td:first-child{position:relative;padding-left:26px}
+tr.g td:first-child::before{content:"▸";position:absolute;left:10px;top:9px;color:var(--mut);font-size:12px;transition:transform .15s}
+tr.g.open td:first-child::before{transform:rotate(90deg)}
+tr.d td{background:#faf7f0;padding:12px 16px 14px 26px}
+.pp{padding:9px 0;border-bottom:1px dashed var(--line)}.pp:first-child{padding-top:0}.pp:last-of-type{border-bottom:0}
+.pp .nm{font-weight:600}.pp .msg{margin-top:4px;font-style:italic}.pp .meta{color:var(--mut);font-size:12px;margin-top:2px}
+.pill.resp{background:#e3f1e5;color:var(--ok)}.pill.open{background:#f6edd0;color:var(--maybe)}.pill.view{background:#eee;color:var(--mut)}
+.pill.multi{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.pill{white-space:nowrap}.onlysm{display:none}
+@media (max-width:559px){
+  #rows td:nth-child(4),.tbl thead th:nth-child(4){display:none}
+  .onlysm{display:block}
+  th,td{padding:9px 8px}
+  tr.g td:first-child{padding-left:22px}tr.g td:first-child::before{left:7px}
+}
 </style>
 </head>
 <body>
@@ -42,8 +63,10 @@ tr:last-child td{border-bottom:0}
   <h1>Save the Date · Panel</h1>
   <div class="stats" id="stats"></div>
 
-  <h2>Invitados</h2>
-  <table><thead><tr><th>Invitado</th><th>Abrió</th><th>Sobre</th><th>Respuesta</th><th>Dejó correo</th></tr></thead><tbody id="rows"></tbody></table>
+  <h2>Invitados <span class="mut small" id="gcount" style="text-transform:none;letter-spacing:0"></span></h2>
+  <div class="chips" id="chips"></div>
+  <div class="tbl"><table><thead><tr><th>Link</th><th>Estado</th><th>Respuesta</th><th>Último</th></tr></thead><tbody id="rows"></tbody></table></div>
+  <p class="small mut">Una fila por link. Toca una fila para ver a las personas que respondieron con ese link y los aparatos que solo lo abrieron.</p>
 
   <h2>Mensajes</h2>
   <table><thead><tr><th>Invitado</th><th>Respuesta</th><th>Mensaje</th></tr></thead><tbody id="notes"></tbody></table>
@@ -136,44 +159,107 @@ const $ = id => document.getElementById(id);
 const slug = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const lbl = {si:"Sí",alla:"Ya está en Venezuela",no:"No",quizas:"Todavía no sabe"};
-const pretty = s => s === "anonimo" ? "Sin identificar" : s.replace(/-/g," ").replace(/\b\w/g,c=>c.toUpperCase());
-let mailList = [];
-let genNames = [];
+const pretty = g => g === "anonimo" ? "Sin identificar" : g.replace(/-/g," ").replace(/\b\w/g,c=>c.toUpperCase()).replace(/ (Y|E) /g,m=>m.toLowerCase());
+const ST = {resp:"Respondió", open:"Abrió, sin responder", view:"Solo vio el link"};
+const when = iso => new Date(iso).toLocaleString("es",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+let mailList = [], genNames = [], GROUPS = [], filter = "all"; const openRows = new Set();
+
+// 1) eventos -> aparatos (link + dispositivo) -> personas -> links
+function build(ev){
+  const dev = {};
+  ev.forEach(e=>{
+    const k = e.guest + "|" + (e.pid || "");
+    const d = dev[k] ||= {guest:e.guest,name:"",nameT:"",email:"",rsvp:null,rsvpT:"",note:"",noteT:"",views:0,open:false,last:e.t};
+    if (e.t > d.last) d.last = e.t;
+    if (e.type==="view") d.views++;
+    if (e.type==="open") d.open = true;
+    const nm = e.data && e.data.name; if (nm && e.t >= d.nameT){ d.name = nm; d.nameT = e.t; }
+    if (e.type==="rsvp"){ d.open = true; if (e.t >= d.rsvpT){ d.rsvp = e.data.answer; d.rsvpT = e.t; } }
+    if (e.type==="name") d.open = true;
+    if (e.type==="note"){ d.open = true; if (e.t >= d.noteT){ d.note = e.data.text || ""; d.noteT = e.t; } }
+    if (e.type==="email"){ d.open = true; d.email = e.data.email || d.email; }
+  });
+  const links = {};
+  Object.values(dev).forEach(d=>{
+    const g = links[d.guest] ||= {guest:d.guest,devs:[],persons:new Map(),anonOpen:0,viewOnly:0,views:0,last:d.last};
+    g.devs.push(d); g.views += d.views; if (d.last > g.last) g.last = d.last;
+    if (d.rsvp || d.email || d.note || d.name){
+      // el mismo correo en el mismo link = la misma persona (aunque haya usado dos aparatos)
+      const key = d.email ? "e:" + d.email.toLowerCase() : "d:" + d.last + d.name;
+      const p = g.persons.get(key) || {name:"",nameT:"",email:"",rsvp:null,rsvpT:"",note:"",noteT:"",devices:0,last:""};
+      g.persons.set(key,p); p.devices++;
+      if (d.name && d.nameT >= p.nameT){ p.name = d.name; p.nameT = d.nameT; }
+      if (d.email) p.email = d.email;
+      if (d.rsvp && d.rsvpT >= p.rsvpT){ p.rsvp = d.rsvp; p.rsvpT = d.rsvpT; }
+      if (d.note && d.noteT >= p.noteT){ p.note = d.note; p.noteT = d.noteT; }
+      if (d.last > p.last) p.last = d.last;
+    } else if (d.open) g.anonOpen++; else g.viewOnly++;
+  });
+  return Object.values(links).map(g=>{
+    g.people = [...g.persons.values()].sort((a,b)=>b.last.localeCompare(a.last));
+    g.state = g.people.some(p=>p.rsvp) ? "resp" : (g.people.length || g.anonOpen) ? "open" : "view";
+    return g;
+  }).sort((a,b)=>b.last.localeCompare(a.last));
+}
+
+function render(){
+  const all = GROUPS, people = all.flatMap(g=>g.people.map(p=>({...p,guest:g.guest})));
+  const n = f => people.filter(f).length;
+  $("stats").innerHTML = [
+    [all.filter(g=>g.state!=="view").length,"links abiertos"],[all.filter(g=>g.state==="resp").length,"links con respuesta"],
+    [n(x=>x.rsvp),"personas respondieron"],[n(x=>x.rsvp==="si"),"dicen que sí"],[n(x=>x.rsvp==="alla"),"ya están en Venezuela"],
+    [n(x=>x.rsvp==="quizas"),"quizás"],[n(x=>x.rsvp==="no"),"no pueden"],[new Set(people.filter(x=>x.email).map(x=>x.email.toLowerCase())).size,"correos"],
+  ].map(([v,l])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join("");
+
+  const cnt = s => all.filter(g=>g.state===s).length;
+  $("chips").innerHTML = [["all","Todos",all.length],["resp","Respondieron",cnt("resp")],["open","Abrieron, sin responder",cnt("open")],["view","Solo vieron",cnt("view")]]
+    .map(([k,t,c])=>`<button class="chip ${filter===k?"on":""}" data-f="${k}">${t}<b>${c}</b></button>`).join("");
+  document.querySelectorAll("#chips .chip").forEach(b=>b.onclick=()=>{ filter = b.dataset.f; render(); });
+
+  const list = all.filter(g=>filter==="all" || g.state===filter);
+  $("gcount").textContent = `· ${list.length} link${list.length===1?"":"s"}`;
+  $("rows").innerHTML = list.map(g=>{
+    const ans = {}; g.people.forEach(p=>{ if (p.rsvp) ans[p.rsvp] = (ans[p.rsvp]||0)+1; });
+    const answers = Object.entries(ans).map(([k,c])=>`<span class="pill ${k}">${lbl[k]}${c>1?" ×"+c:""}</span>`).join(" ") || '<span class="mut">—</span>';
+    const names = g.people.map(p=>p.name).filter(Boolean);
+    const ppl = g.people.filter(p=>p.rsvp).length;
+    const open = openRows.has(g.guest);
+    return `<tr class="g ${open?"open":""}" data-k="${esc(g.guest)}" tabindex="0" aria-expanded="${open}">
+      <td>${esc(pretty(g.guest))}${names.length?`<div class="small mut">${esc(names.join(", "))}</div>`:""}<div class="small mut onlysm">${when(g.last)}</div></td>
+      <td><span class="pill ${g.state}">${ST[g.state]}</span>${ppl>1?` <span class="pill multi">${ppl} personas</span>`:""}</td>
+      <td>${answers}</td><td class="small mut">${when(g.last)}</td></tr>
+      <tr class="d" data-d="${esc(g.guest)}" ${open?"":"hidden"}><td colspan="4">${detail(g)}</td></tr>`;
+  }).join("") || `<tr><td colspan="4" class="mut">No hay links en esta vista.</td></tr>`;
+  document.querySelectorAll("#rows tr.g").forEach(tr=>{
+    const go = ()=>{ const k = tr.dataset.k; openRows.has(k) ? openRows.delete(k) : openRows.add(k); render(); };
+    tr.onclick = go; tr.onkeydown = e=>{ if (e.key==="Enter"||e.key===" "){ e.preventDefault(); go(); } };
+  });
+
+  const withNote = people.filter(x=>x.note).sort((a,b)=>b.last.localeCompare(a.last));
+  $("notes").innerHTML = withNote.map(x=>`<tr><td>${esc(x.name||pretty(x.guest))}<div class="small mut">${esc(pretty(x.guest))}</div></td>
+    <td>${x.rsvp?`<span class="pill ${x.rsvp}">${lbl[x.rsvp]}</span>`:""}</td><td>${esc(x.note)}</td></tr>`).join("")
+    || `<tr><td colspan="3" class="mut">Nadie ha dejado mensajes todavía.</td></tr>`;
+  const mails = people.filter(x=>x.email).sort((a,b)=>b.last.localeCompare(a.last)); mailList = mails;
+  $("mails").innerHTML = mails.map(m=>`<tr><td>${esc(m.name)}</td><td>${esc(m.email)}</td><td class="small mut">${esc(pretty(m.guest))}</td></tr>`).join("")
+    || `<tr><td colspan="3" class="mut">Aún no hay correos.</td></tr>`;
+  $("copyMails").hidden = !mails.length;
+}
+
+function detail(g){
+  const ppl = g.people.map(p=>`<div class="pp"><span class="nm">${esc(p.name||"(sin nombre)")}</span>
+      ${p.rsvp?`<span class="pill ${p.rsvp}">${lbl[p.rsvp]}</span>`:'<span class="pill view">sin respuesta</span>'}
+      <div class="meta">${p.email?esc(p.email)+" · ":""}${when(p.last)}${p.devices>1?` · ${p.devices} aparatos`:""}</div>
+      ${p.note?`<div class="msg">“${esc(p.note)}”</div>`:""}</div>`).join("");
+  const extra = [];
+  if (g.anonOpen) extra.push(g.anonOpen===1 ? "1 aparato abrió el sobre sin dejar datos" : `${g.anonOpen} aparatos abrieron el sobre sin dejar datos`);
+  if (g.viewOnly) extra.push(g.viewOnly===1 ? "1 aparato solo vio el link (a veces es solo la vista previa del chat)" : `${g.viewOnly} aparatos solo vieron el link (a veces es solo la vista previa del chat)`);
+  return (ppl || '<div class="mut">Nadie ha dejado datos con este link todavía.</div>')
+    + (extra.length?`<div class="small mut" style="margin-top:8px">${extra.join(" · ")} · ${g.views} visita${g.views===1?"":"s"} en total</div>`:`<div class="small mut" style="margin-top:8px">${g.views} visita${g.views===1?"":"s"} en total</div>`);
+}
 
 async function load(key){
   const ev = await stdFetchAll(key);
-  const g = {}, mails = [], lastMail = {};
-  ev.forEach(e=>{
-    const k = e.guest + "|" + (e.pid || "");                       // una persona = un link + un dispositivo (varios familiares pueden compartir link)
-    const x = g[k] ||= {guest:e.guest,name:"",views:0,open:false,rsvp:null,note:"",addr:null,last:e.t};
-    if (e.t > x.last) x.last = e.t;
-    if (e.type==="view") x.views++;
-    if (e.type==="open") x.open = true;
-    // para responder o dejar el correo hay que abrir el sobre
-    if (e.type==="rsvp"){ x.open = true; x.rsvp = e.data.answer; if (e.data.note) x.note = e.data.note; if (e.data.name) x.name = e.data.name; }
-    if (e.type==="name"){ x.open = true; x.name = e.data.name||x.name; }
-    if (e.type==="note"){ x.open = true; x.note = e.data.text||""; }          // se guarda mientras escriben: gana el último
-    if (e.type==="email"){ x.open = true; x.addr = e.data; if (e.data.name) x.name = e.data.name; lastMail[k] = {guest:e.guest,t:e.t,...e.data}; }
-  });
-  mails.push(...Object.values(lastMail));
-  const list = Object.values(g).sort((a,b)=>b.last.localeCompare(a.last));
-  const n = f => list.filter(f).length;
-  $("stats").innerHTML = [
-    [list.length,"abrieron el link"],[n(x=>x.open),"abrieron el sobre"],
-    [n(x=>x.rsvp==="si"),"dicen que sí"],[n(x=>x.rsvp==="alla"),"ya están en Venezuela"],
-    [n(x=>x.rsvp==="quizas"),"quizás"],[n(x=>x.rsvp==="no"),"no pueden"],[n(x=>x.addr),"dejaron correo"],
-  ].map(([v,l])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join("");
-  $("rows").innerHTML = list.map(x=>`<tr><td>${esc(x.name||pretty(x.guest))}${x.name&&x.guest!=="anonimo"?`<div class="small mut">${esc(x.guest)}</div>`:""}</td><td>${x.views}×</td><td>${x.open?"✓":"—"}</td>
-    <td>${x.rsvp?`<span class="pill ${x.rsvp}">${lbl[x.rsvp]}</span>`:'<span class="mut">sin respuesta</span>'}</td>
-    <td>${x.addr?"✓":""}</td></tr>`).join("") || `<tr><td colspan="5" class="mut">Aún no hay actividad.</td></tr>`;
-  $("notes").innerHTML = list.filter(x=>x.note).map(x=>`<tr><td>${esc(x.name||pretty(x.guest))}</td>
-    <td><span class="pill ${x.rsvp}">${lbl[x.rsvp]||""}</span></td><td>${esc(x.note)}</td></tr>`).join("")
-    || `<tr><td colspan="3" class="mut">Nadie ha dejado mensajes todavía.</td></tr>`;
-  mails.sort((a,b)=>b.t.localeCompare(a.t)); mailList = mails;
-  $("mails").innerHTML = mails.map(m=>`<tr><td>${esc(m.name)}</td><td>${esc(m.email)}</td>
-    <td class="small mut">${esc(pretty(m.guest))}</td></tr>`).join("")
-    || `<tr><td colspan="3" class="mut">Aún no hay correos.</td></tr>`;
-  $("copyMails").hidden = !mails.length;
+  GROUPS = build(ev); render();
 }
 
 async function enter(){
@@ -195,7 +281,7 @@ $("gen").onclick = () => {
   $("links").hidden = false; $("copy").hidden = !genNames.length;
   $("links").tBodies[0].innerHTML = genNames.map(([n,u])=>`<tr><td>${esc(n)}</td><td>${esc(u)}</td></tr>`).join("");
 };
-$("copyMails").onclick = () => navigator.clipboard.writeText([...new Set(mailList.map(m=>m.email))].join(", ")).then(()=>{$("copyMails").textContent="Copiado ✓"});
+$("copyMails").onclick = () => navigator.clipboard.writeText([...new Set(mailList.map(m=>m.email.toLowerCase()))].join(", ")).then(()=>{$("copyMails").textContent="Copiado ✓"});
 $("copy").onclick = () => navigator.clipboard.writeText(genNames.map(([n,u])=>`${n}\t${u}`).join("\n")).then(()=>{$("copy").textContent="Copiado ✓"});
 </script>
 </body>
